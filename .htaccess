@@ -1,0 +1,10 @@
+RewriteEngine On
+
+RewriteBase /
+
+# aplikacja admin
+RewriteCond %{REQUEST_URI} ^/admin [NC]
+RewriteRule ^(.*)$ public/admin.php/$1 [L]
+
+# aplikacja website
+RewriteRule ^(.*)$ public/index.php/$1 [L]
