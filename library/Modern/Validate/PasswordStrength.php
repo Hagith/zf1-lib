@@ -14,7 +14,7 @@
  * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
- * @package     Validate
+ * @package     Modern_Validate
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
@@ -24,7 +24,7 @@
  * PasswordStrength validator.
  *
  * @category    Modern
- * @package     Validate
+ * @package     Modern_Validate
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
