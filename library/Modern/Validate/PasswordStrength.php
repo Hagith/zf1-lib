@@ -59,7 +59,7 @@ class Modern_Validate_PasswordStrength extends Zend_Validate_Abstract
      *   'lower' => boolean, at least 1 lowercase character
      *   'upper' => boolean, at least 1 uppercase character
      *   'digitOrSpecial' => boolean, at least 1 digit or 1 symbol
-     *   'diactric' => boolean, allow distric characters, default to false
+     *   'diactric' => boolean, allow diactric characters, default to false
      *
      * @param array|Zend_Config $options
      */
