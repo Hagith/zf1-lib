@@ -1,0 +1,5 @@
+<?php foreach($this->messages as $message): ?>
+<div class="alert alert-<?=$message['type']?>">
+    <?=$message['body']?>
+</div>
+<?php endforeach; ?>
