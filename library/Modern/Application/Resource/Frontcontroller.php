@@ -24,8 +24,9 @@
 require_once('Zend/Application/Resource/Frontcontroller.php');
 
 /**
- * Klasa stanowi rozszerzenie zasobu FrntController'a.
- * Rozszerzenie umożliwia zarejestrowanie zmodyfikowanego obiektu dispatchera.
+ * Class is an extension of the Zend Frontcontroller resource.
+ *
+ * Allows to register custom dispatcher class.
  *
  * @category    Modern
  * @package     Modern_Application
@@ -36,7 +37,7 @@ require_once('Zend/Application/Resource/Frontcontroller.php');
 class Modern_Application_Resource_Frontcontroller extends Zend_Application_Resource_Frontcontroller
 {
     /**
-     * Inicjuje Front Controller.
+     * Initialize Front Controller
      *
      * @return Zend_Controller_Front
      */

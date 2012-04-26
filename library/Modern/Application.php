@@ -23,8 +23,9 @@
 require_once('Zend/Application.php');
 
 /**
- * Rozszerzenie komponentu Zend_Application.
- * Wprowadza podział systemu na więcej niż jedną aplikację.
+ * Zend_Application component extension.
+ *
+ * Introduces a system breakdown to more than one application.
  *
  * @category    Modern
  * @package     Modern_Application
@@ -34,14 +35,14 @@ require_once('Zend/Application.php');
 class Modern_Application extends Zend_Application
 {
     /**
-     * Nazwa uruchomionej aplikacji.
+     * Name of current application.
      *
      * @var string
      */
     protected $_name;
 
     /**
-     * Przeciążony konstruktor pozwala na podanie nazwy uruchamianej aplikacji.
+     * Overloaded constructor allows to specify the name of the application to run.
      *
      * @param string $environment
      * @param string|array|Zend_Config $options
@@ -57,7 +58,7 @@ class Modern_Application extends Zend_Application
     }
 
     /**
-     * Ustawia nazwę aplikacji.
+     * Set an application name.
      *
      * @param string $name
      * @return Modern_Application
@@ -69,7 +70,7 @@ class Modern_Application extends Zend_Application
     }
 
     /**
-     * Zwraca nazwę aplikacji.
+     * Get the current application name.
      *
      * @return string
      */
@@ -79,12 +80,12 @@ class Modern_Application extends Zend_Application
     }
 
     /**
-     * Ustawia konfigurację aplikacji.
+     * Set application options.
      *
-     * Nadpisuje metodę rodzica w celu obsłużenia konfiguracji specyficznej
-     * dla bieżącej aplikacji - jeśli została ustawiona.
+     * Overrides the parent method to handle the application-specific
+     * configuration - if it has been set.
      *
-     * @param  array $options
+     * @param array $options
      * @return Zend_Application
      */
     public function setOptions(array $options)
@@ -103,14 +104,14 @@ class Modern_Application extends Zend_Application
             throw new Zend_Application_Exception("Nie określono listy dostępnych aplikacji");
         }
 
-        // łączenie konfiguracji specyficznej dla aplikacji
+        // merge application-specific configuration
         foreach($options as $key => &$config) {
             if(null !== $this->_name && isset($config[$this->_name])) {
                 $config = $this->mergeOptions($config, $config[$this->_name]);
             }
         }
 
-        // usuwanie opcji specyficznych aplikacji
+        // remove other application-specific options
         foreach($options['applications'] as $application) {
             foreach ($options as $key => &$config) {
                 if(isset($config[$application])) {

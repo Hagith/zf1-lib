@@ -21,6 +21,8 @@
  */
 
 /**
+ * Base class for Modern library exceptions.
+ *
  * @category    Modern
  * @package     Modern
  * @author      Rafał Gałka <rafal@modernweb.pl>

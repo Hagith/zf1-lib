@@ -24,7 +24,7 @@
 require_once('Zend/Application/Bootstrap/Bootstrap.php');
 
 /**
- * Bootstrap aplikacji.
+ * Main application bootstrap.
  *
  * @category    Modern
  * @package     Modern_Application
