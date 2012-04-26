@@ -16,7 +16,7 @@
  * @package     Modern_Application
  * @subpackage  Bootstrap
  * @author      Rafał Gałka <rafal@modernweb.pl>
- * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
@@ -30,7 +30,7 @@ require_once('Zend/Application/Bootstrap/Bootstrap.php');
  * @package     Modern_Application
  * @subpackage  Bootstrap
  * @author      Rafał Gałka <rafal@modernweb.pl>
- * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
 class Modern_Application_Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {

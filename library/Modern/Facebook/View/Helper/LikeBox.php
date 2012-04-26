@@ -16,7 +16,7 @@
  * @package     Modern_Facebook
  * @subpackage  View
  * @author      Rafał Gałka <rafal@modernweb.pl>
- * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
@@ -30,7 +30,7 @@ require_once('Zend/View/Helper/Abstract.php');
  * @package     Modern_Facebook
  * @subpackage  View
  * @author      Rafał Gałka <rafal@modernweb.pl>
- * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 class Modern_Facebook_View_Helper_LikeBox extends Zend_View_Helper_Abstract

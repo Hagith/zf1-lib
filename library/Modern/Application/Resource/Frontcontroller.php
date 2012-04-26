@@ -16,7 +16,7 @@
  * @package     Modern_Application
  * @subpackage  Resource
  * @author      Rafał Gałka <rafal@modernweb.pl>
- * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
@@ -32,7 +32,7 @@ require_once('Zend/Application/Resource/Frontcontroller.php');
  * @package     Modern_Application
  * @subpackage  Resource
  * @author      Rafał Gałka <rafal@modernweb.pl>
- * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
 class Modern_Application_Resource_Frontcontroller extends Zend_Application_Resource_Frontcontroller
 {
