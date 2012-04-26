@@ -26,7 +26,7 @@ require_once('Zend/Application/Resource/Frontcontroller.php');
 /**
  * Class is an extension of the Zend Frontcontroller resource.
  *
- * Allows to register custom dispatcher class.
+ * Allows to register custom dispatcher/response classes.
  *
  * @category    Modern
  * @package     Modern_Application
@@ -48,6 +48,10 @@ class Modern_Application_Resource_Frontcontroller extends Zend_Application_Resou
                 case 'dispatcherclass':
                     Zend_Loader::loadClass($value);
                     $this->getFrontController()->setDispatcher(new $value());
+                    break;
+                case 'responseclass':
+                    Zend_Loader::loadClass($value);
+                    $this->getFrontController()->setResponse(new $value());
                     break;
             }
         }
