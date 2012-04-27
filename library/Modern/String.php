@@ -164,6 +164,20 @@ class Modern_String
     }
 
     /**
+     * @return \Modern_String
+     */
+    public function lowercase()
+    {
+        if (empty($this->_string)) {
+            return $this;
+        }
+
+        $this->_string = mb_strtolower($this->_string, 'utf-8');
+
+        return $this;
+    }
+
+    /**
      * @param boolean $lowercase
      * @return \Modern_String
      */
@@ -176,7 +190,7 @@ class Modern_String
         $this->toAscii();
 
         if ($lowercase) {
-            $this->_string = mb_strtolower($this->_string, 'utf-8');
+            $this->lowercase();
         }
 
         $replacements = array(
