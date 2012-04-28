@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ModernWeb
  *
@@ -35,6 +36,13 @@ require_once('Zend/Application.php');
 class Modern_Application extends Zend_Application
 {
     /**
+     * Class instance. Allow static acces to Modern_Application object.
+     *
+     * @var Modern_Application
+     */
+    protected static $_instance;
+
+    /**
      * Name of current application.
      *
      * @var string
@@ -55,6 +63,8 @@ class Modern_Application extends Zend_Application
             $this->setName($name);
         }
         parent::__construct($environment, $options);
+
+        self::$_instance = $this;
     }
 
     /**
@@ -95,13 +105,13 @@ class Modern_Application extends Zend_Application
             unset($options['config']);
         }
 
-        if(
-            null !== $this->_name
-            && !isset($options['applications'])
-            && !is_array($options['applications'])
-        ) {
+        if (null === $this->_name) {
+            return parent::setOptions($options);
+        }
+
+        if(!isset($options['applications']) && !is_array($options['applications'])) {
             require_once 'Zend/Application/Exception.php';
-            throw new Zend_Application_Exception("Nie określono listy dostępnych aplikacji");
+            throw new Zend_Application_Exception('You must provide list of available application');
         }
 
         // merge application-specific configuration
@@ -122,4 +132,30 @@ class Modern_Application extends Zend_Application
 
         return parent::setOptions($options);
     }
+
+    /**
+     * Alias method for quick acces to application resources.
+     *
+     * @param string $name
+     * @return Zend_Application_Resource_ResourceAbstract|null
+     */
+    public function getResource($name)
+    {
+        return $this->getBootstrap()->getResource($name);
+    }
+
+    /**
+     * Get class instance.
+     *
+     * @return Modern_Application
+     */
+    public static function getInstance()
+    {
+        if(null === self::$_instance) {
+            self::$_instance = new self();
+        }
+
+        return self::$_instance;
+    }
+
 }
