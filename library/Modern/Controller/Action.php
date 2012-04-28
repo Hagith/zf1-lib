@@ -42,7 +42,7 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
     /**
      * Logger reference.
      *
-     * @var Zend_Log
+     * @var Modern_Log
      */
     protected $_log;
 
