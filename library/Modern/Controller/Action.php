@@ -47,6 +47,13 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
     protected $_log;
 
     /**
+     * ContextSwitch controller helper instance
+     *
+     * @var Zend_Controller_Action_Helper_ContextSwitch
+     */
+    protected $_context;
+
+    /**
      * Class constructor
      *
      * The request and response objects should be registered with the
@@ -81,7 +88,47 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
         $this->_bootstrap = $this->getInvokeArg('bootstrap');
         $this->_log = $this->_bootstrap->getResource('log');
 
+        // initialize context helper
+        $this->_context = $this->_helper->getHelper('contextSwitch');
+        if(!$this->_context->hasContext('html')) {
+            $this->_context->addContext(
+                'html', array(
+                    'suffix'    => '',
+                    'headers'   => array('Content-Type' => 'text/html'),
+                )
+            );
+        }
+        $this->_context->setContextParam('context');
+        $this->_context->setCallback('json', 'TRIGGER_INIT', array($this, 'contextJsonCallback'));
+        $this->_context->setCallback('xml', 'TRIGGER_INIT', array($this, 'contextXmlCallback'));
+        $this->_context->setCallback('html', 'TRIGGER_INIT', array($this, 'contextXmlCallback'));
+
         $this->init();
+
+        $this->_context->initContext();
+    }
+
+    /**
+     * Callback for JSON context.
+     *
+     * Turn off view renderer and layout.
+     *
+     */
+    public function contextJsonCallback()
+    {
+        $this->getHelper('viewRenderer')->setNoRender(true);
+        $this->_helper->layout->disableLayout();
+    }
+
+    /**
+     * Callback for XML context.
+     *
+     * Turn off layout.
+     *
+     */
+    public function contextXmlCallback()
+    {
+        $this->_helper->layout->disableLayout();
     }
 
 }
