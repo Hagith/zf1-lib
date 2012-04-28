@@ -21,7 +21,7 @@
  */
 
 /**
- * Base class for Modern library exceptions.
+ * Base exception class for Modern library.
  *
  * @category    Modern
  * @package     Modern

@@ -20,6 +20,9 @@
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
+/** @see Modern_Exception */
+require_once('Modern/Exception.php');
+
 /**
  * @category    Modern
  * @package     Modern_Controller
