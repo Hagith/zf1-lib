@@ -140,4 +140,23 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
         $this->_helper->layout->disableLayout();
     }
 
+    /**
+     * Proxy for undefined methods.  Default behavior is to throw an
+     * exception on undefined methods, however this function can be
+     * overridden to implement magic (dynamic) actions, or provide run-time
+     * dispatching.
+     *
+     * Added translate call.
+     *
+     * @param string $methodName
+     * @param array $args
+     * @return mixed
+     */
+    public function __call($methodName, $args) {
+        if ($methodName == '_') {
+            return call_user_func_array(array($this->view, '_'), $args);
+        }
+        parent::__call($methodName, $args);
+    }
+
 }
