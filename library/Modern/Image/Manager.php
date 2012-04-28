@@ -1,46 +1,52 @@
 <?php
 
 /**
- * Modern
+ * ModernWeb
  *
  * LICENSE
  *
- * This source file is subject to version 1.0
- * of the ModernWeb license.
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.modernweb.pl/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
  * @package     Modern_Image
  * @subpackage  Manager
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
+ * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 /** @see Modern_Image */
 require_once 'Modern/Image.php';
 
 /**
- * Klasa realizująca generację miniatur dla plików graficznych.
+ * Image thumbnail manager.
  *
  * @category    Modern
  * @package     Modern_Image
  * @subpackage  Manager
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
 class Modern_Image_Manager
 {
     /**
-     * Ścieżka absolutna do wygenerowanych plików
+     * Document root path.
      *
      * @var string
      */
-    protected $_destinationPath = null;
+    protected $_documentRoot;
 
     /**
-     * Baza adresowa do plików wygenerowanych
+     * Thumbnails directory (relative to $this->_documentRoot).
      *
      * @var string
      */
-    protected $_destinationUrl = null;
+    protected $_thumbsDir;
 
     /**
      * Flaga mówiąca czy manager ma tworzyć foldery dla konkretnych typów z miniaturkami
@@ -64,7 +70,7 @@ class Modern_Image_Manager
     protected $_types = null;
 
     /**
-     * Adapter do Imaga
+     * Image adapter
      *
      * @var Modern_Image_Adapter
      */
@@ -103,39 +109,26 @@ class Modern_Image_Manager
     /**
      * Konstruktor - przekazanie konfiguracji
      *
-     * @param Zend_Config|array $configuration
+     * @param Zend_Config|array $config
      */
-    public function __construct($configuration)
+    public function __construct($config)
     {
-        if (is_array($configuration)) {
-            $configuration = new Zend_Config($configuration);
-        }
-        // Pobranie bazowego url'a (na wszelki wypadek jak by było odpalane w podkatalogu)
-        $baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
-
-        /**
-         * Konfiguracja ścieżki docelowej (parametr <destinationUrl>)
-         * ścieżka wskazuje na katalog w którym przechowywane będą wygenerowane miniaturki
-         */
-        $this->_destinationUrl = $configuration->get('destinationUrl', null);
-
-        if (null === $this->_destinationUrl) {
-            throw new Modern_Image_Manager_Exception('Ścieżka docelowa nie została skonfigurowana');
+        if (is_array($config)) {
+            $config = new Zend_Config($config);
         }
 
-        // Przygotowanie ścieżki absolutnej do katalogu
-        $this->_destinationPath = rtrim($configuration->get('destinationUrl'), '/');
+        $this->setDocumentRoot($config->documentRoot);
+        $this->setThumbsDir($config->thumbsDir);
 
-        if (!is_dir($this->_destinationPath)) {
-            umask(0);
-            mkdir($this->_destinationPath, 0777, true);
+        if (!is_dir($this->getThumbsDir(true))) {
+            mkdir($this->getThumbsDir(true), 0777, true);
         }
 
         /**
          * Parametr <useNamesAsFolders> mówi o tym czy Manager ma tworzyć podkatalogi w katalogu bazowym
          * o nazwie zgodnej z nazwą szablonu rozmiarowego. Daje to możliwość składowania miniaturek w osobnych katalogach.
          */
-        $this->_useNamesAsFolders = (boolean) $configuration->get('useNamesAsFolders', $this->_useNamesAsFolders);
+        $this->_useNamesAsFolders = (boolean) $config->get('useNamesAsFolders', $this->_useNamesAsFolders);
 
         /**
          * Parametr <folderDepth> wskazuje ile podkatalogów ma być tworzonych na podstawie nazwy pliku. Algorytm
@@ -144,7 +137,7 @@ class Modern_Image_Manager
          * plik abcdefghjk.jpg przy parametrze <folderDepth>=3 zapisany zostanie w podkatalogach:
          * /<ścieżka bazowa>/<ew. nazwa typu>/a/b/c/abcdefghjk.jpg
          */
-        $this->_folderDepth = (int) $configuration->get('folderDepth', $this->_folderDepth);
+        $this->_folderDepth = (int) $config->get('folderDepth', $this->_folderDepth);
 
         /**
          * Maksymalna głębokość to 32 bo taka jest długość nazwy pliku tymczasowego.
@@ -172,7 +165,7 @@ class Modern_Image_Manager
          *      <keepAspectRatio>   - czy mają być zachowane proporcje
          *      <forceResize>       - czy jeśli obraz docelowy jest mniejszy ma go powiększać
          */
-        $this->_types = $configuration->get('type', null);
+        $this->_types = $config->get('type', null);
         if (null === $this->_types) {
             $this->_types = array();
         } else {
@@ -188,51 +181,85 @@ class Modern_Image_Manager
     /**
      * Konwersja pliku
      *
-     * @param string $fileName
+     * @param string $filename
      * @param string $type
      */
-    public function get($fileName, $type)
+    public function get($filename, $type)
     {
         if (!isset($this->_types[$type])) {
             throw new Modern_Image_Manager_Exception("Brak zdefiniwanego typu '$type'");
         }
 
-        /**
-         * Sprawdza czy istnieje plik źródłowy
-         */
-        var_dump($fileName);
-        exit;
-        $file = ROOT_PATH . $fileName;
-        if (!file_exists($file) || is_dir($file)) {
+        $filename = ltrim($filename, '/');
+        $path = $this->getDocumentRoot() . $filename;
+
+        // check if source file exists with fallback to default image
+        if (!is_file($path) && isset($this->_types[$type]['default'])) {
+            $filename = ltrim($this->_types[$type]['default'], '/');
+            $path = $this->getDocumentRoot() . $filename;
+        }
+
+        if (!is_file($path)) {
+            // throw exception when wrong configuration provided
             if (isset($this->_types[$type]['default'])) {
-                $fileName = $this->_types[$type]['default'];
-                $file = ROOT_PATH . $this->_types[$type]['default'];
-            } else {
-                /**
-                 * Zwraca pusty ciąg w momencie gdy nie ma pliku źródłowego i domyślnego
-                 */
-                return '';
+                throw new Modern_Image_Manager_Exception(
+                    "Default image '$path' for type '$type' does not exists"
+                );
             }
+
+            // return empty string when no source file
+            return '';
         }
 
-        /**
-         * Budowanie ścieżki do pliku miniaturki
-         */
-        $tempFileName = $this->_generateTempFileName($fileName, $type);
+        // prepare thumbnail path
+        $thumb = $this->getThumbsDir(true) . $this->_generateTempFileName($filename, $type);
 
-        // Jeśli plik istnieje, zwraca adres
-        if (file_exists($this->_destinationPath . $tempFileName)) {
-            return $this->_destinationUrl . $tempFileName;
+        // if thumbnail already exist do nothing
+        if (is_file($thumb)) {
+            return $thumb;
         }
 
-        $this->_generateThumbFile($file, $this->_destinationPath . $tempFileName, $type);
-        return $this->_destinationUrl . $tempFileName;
-        // Jeśli nie generuje nowy
+        // generate thumbnail
+        $this->_generateThumbFile($path, $thumb, $type);
+
+        return $thumb;
+    }
+
+    public function getDocumentRoot()
+    {
+        if (!$this->_documentRoot && isset($_SERVER['DOCUMENT_ROOT'])) {
+            $this->setDocumentRoot($_SERVER['DOCUMENT_ROOT']);
+        }
+
+        return $this->_documentRoot;
+    }
+
+    public function setDocumentRoot($path)
+    {
+        $this->_documentRoot = rtrim($path, '/') . '/';
+
+        return $this;
+    }
+
+    public function getThumbsDir($absolute = false)
+    {
+        if ($absolute) {
+            return $this->getDocumentRoot() . $this->_thumbsDir;
+        }
+
+        return $this->_thumbsDir;
+    }
+
+    public function setThumbsDir($thumbsDir)
+    {
+        $this->_thumbsDir = rtrim($thumbsDir, '/');
+
+        return $this;
     }
 
     /**
-     * Generuje nazwę pliku tymczasowego wraz ze ścieżką do głównego katalogu thumbnaili na podstawie
-     * konfiguracji.
+     * Generuje nazwę pliku tymczasowego wraz ze ścieżką do głównego katalogu
+     * thumbnaili na podstawie konfiguracji.
      *
      * @param string $fileName
      * @param string $type

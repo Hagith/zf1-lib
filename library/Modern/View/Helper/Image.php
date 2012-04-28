@@ -39,9 +39,14 @@ class Modern_View_Helper_Image extends Zend_View_Helper_Abstract
     public function image($source, $type)
     {
         $manager = Modern_Application::getInstance()->getResource('image');
+        /* @var $manager Modern_Image_Manager */
         if(null === $manager) {
             return '';
         }
-        return $manager->get($source, $type);
+
+        $thumb = $manager->get($source, $type);
+        $thumb = '/' . str_replace($manager->getDocumentRoot(), '', $thumb);
+
+        return $thumb;
     }
 }
