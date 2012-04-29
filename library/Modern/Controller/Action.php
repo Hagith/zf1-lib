@@ -33,6 +33,13 @@
 abstract class Modern_Controller_Action extends Zend_Controller_Action
 {
     /**
+     * Zend_Controller_Request_Http object wrapping the request environment
+     *
+     * @var Zend_Controller_Request_Http
+     */
+    protected $_request = null;
+
+    /**
      * Bootstrap reference.
      *
      * @var Modern_Application_Bootstrap
