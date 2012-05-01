@@ -327,6 +327,7 @@ class Modern_Image_Manager
             call_user_func_array(array($this->_image, $method), $params);
         }
         $this->_image->save($destination);
+        chmod($destination, 0777);
     }
 
 }
