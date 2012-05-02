@@ -249,24 +249,27 @@ class Modern_Image_Adapter_Gd2 extends Modern_Image_Adapter
     /**
      * Zapisanie obrazu do pliku
      *
-     * @param string $destFile          Nazwa i ścieżka dla nowego pliku
+     * @param string $destFile Nazwa i ścieżka dla nowego pliku
      * @return boolean
      */
     public function save($destFile)
     {
+        $ext = pathinfo($destFile, PATHINFO_EXTENSION);
+        $destFile = preg_replace("|.$ext$|", '', trim($destFile));
+
         switch ($this->_config->imageType) {
             case Modern_Image_Adapter::JPG:
-                $result = imagejpeg($this->_resource, trim($destFile), $this->_config->quality);
+                $result = imagejpeg($this->_resource, "$destFile.jpg" , $this->_config->quality);
                 break;
             case Modern_Image_Adapter::PNG:
                 $this->_saveAlphaData($this->_resource);
                 $result = imagepng(
-                    $this->_resource, trim($destFile),
+                    $this->_resource, "$destFile.png",
                     $this->_qualityToPngCompress($this->_config->quality)
                 );
                 break;
             case Modern_Image_Adapter::GIF:
-                $result = imagegif($this->_resource, trim($destFile));
+                $result = imagegif($this->_resource, "$destFile.gif");
                 break;
         }
         return (bool) $result;

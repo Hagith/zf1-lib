@@ -274,10 +274,14 @@ class Modern_Image_Manager
             $path .= '/' . $type;
         }
 
+        $ext = (isset($this->_types[$type]['imageType']))
+            ? $this->_types[$type]['imageType']
+            : pathinfo($fileName, PATHINFO_EXTENSION);
+
         /**
          * md5 daje 32 ciąg znaków który da się jeszcze po równo porozrzucać po katalogach
          */
-        $thumbName = md5($type . $fileName) . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
+        $thumbName = md5($type . $fileName) . '.' . $ext;
 
         // Budowanie ścieżki składającej się z liter
         $i = 0;
@@ -323,7 +327,12 @@ class Modern_Image_Manager
         }
 
         $this->_image->open($source);
+
         if ('original' !== $method) {
+            if (isset($this->_types[$type]['imageType'])) {
+                $this->_image->setImageType($this->_types[$type]['imageType']);
+            }
+
             call_user_func_array(array($this->_image, $method), $params);
         }
         $this->_image->save($destination);
