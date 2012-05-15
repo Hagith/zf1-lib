@@ -14,20 +14,39 @@
  * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
- * @package     Modern
+ * @package     Modern_Gdata
+ * @package     Maps
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
 /**
- * Base exception class for Modern library.
- *
  * @category    Modern
- * @package     Modern
+ * @package     Modern_Gdata
+ * @package     Maps
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
-class Modern_Exception extends Exception
+class Modern_Gdata_Maps_Point
 {
+    public $x = 0;
+    public $y = 0;
+
+    public function __construct($x, $y)
+    {
+        $this->x = (float) $x;
+        $this->y = (float) $y;
+    }
+
+    public function toStrign()
+    {
+        return $this->__toString();
+    }
+
+    public function __toString()
+    {
+        return sprintf("(%.14f, %.14f)", $this->x, $this->y);
+    }
+
 }

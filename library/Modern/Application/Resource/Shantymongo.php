@@ -14,20 +14,28 @@
  * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
- * @package     Modern
+ * @package     Modern_Application
+ * @subpackage  Resource
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
 /**
- * Base exception class for Modern library.
+ * Shanty Mongo application resource.
+ * @link https://github.com/coen-hyde/Shanty-Mongo
  *
  * @category    Modern
- * @package     Modern
+ * @package     Modern_Application
+ * @subpackage  Resource
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
-class Modern_Exception extends Exception
+class Modern_Application_Resource_ShantyMongo extends Zend_Application_Resource_ResourceAbstract
 {
+    public function init()
+    {
+        Shanty_Mongo::addConnections($this->getOptions());
+    }
+
 }
