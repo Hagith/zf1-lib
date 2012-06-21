@@ -9,4 +9,13 @@
         <exclude>
         </exclude>
     </groups>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">PHP</directory>
+            <exclude>
+                <file>tests/_autoload.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>

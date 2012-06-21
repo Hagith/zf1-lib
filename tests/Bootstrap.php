@@ -69,7 +69,11 @@ if (is_readable($zfCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php')) {
 }
 
 if (defined('TESTS_GENERATE_REPORT') && TESTS_GENERATE_REPORT === true) {
-    $codeCoverageFilter = PHP_CodeCoverage_Filter::getInstance();
+    if (method_exists('PHP_CodeCoverage_Filter', 'getInstance')) {
+        $codeCoverageFilter = PHP_CodeCoverage_Filter::getInstance();
+    } else {
+        $codeCoverageFilter = new PHP_CodeCoverage_Filter();
+    }
 
     $lastArg = end($_SERVER['argv']);
     if (is_dir($zfCoreTests . '/' . $lastArg)) {
