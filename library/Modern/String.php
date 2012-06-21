@@ -55,8 +55,16 @@ class Modern_String
      */
     public function setString($string)
     {
+        if (is_object($string) && method_exists($string, '__toString')) {
+            $string = (string)$string;
+        }
+
+        if (is_numeric($string)) {
+            $string = (string)$string;
+        }
+
         if (!is_string($string)) {
-            throw new Modern_String_Exception('Value must be string.');
+            throw new Modern_String_Exception('Value must be string');
         }
 
         $this->_string = $string;
@@ -158,7 +166,7 @@ class Modern_String
             return $this;
         }
 
-        $this->_string = iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $this->_string);
+        $this->_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->_string);
 
         return $this;
     }
