@@ -36,6 +36,8 @@ class Modern_String_Transliteration
 {
     protected static $_tail_bytes;
 
+    protected static $_map = array();
+
     /**
      * Transliterates UTF-8 encoded text to US-ASCII.
      *
@@ -219,32 +221,32 @@ class Modern_String_Transliteration
      */
     protected static function _replace($ord, $unknown = '?', $langcode = NULL)
     {
-        static $map = array();
-
         if (!isset($langcode)) {
             $langcode = 'en';
         }
 
         $bank = $ord >> 8;
 
-        if (!isset($map[$bank][$langcode])) {
+        if (!isset(self::$_map[$bank][$langcode])) {
             $file = dirname(__FILE__) . '/Transliteration/Data/' . sprintf('x%02x', $bank) . '.php';
             if (file_exists($file)) {
                 include $file;
                 if ($langcode != 'en' && isset($variant[$langcode])) {
                     // Merge in language specific mappings.
-                    $map[$bank][$langcode] = $variant[$langcode] + $base;
+                    self::$_map[$bank][$langcode] = $variant[$langcode] + $base;
                 } else {
-                    $map[$bank][$langcode] = $base;
+                    self::$_map[$bank][$langcode] = $base;
                 }
             } else {
-                $map[$bank][$langcode] = array();
+                self::$_map[$bank][$langcode] = array();
             }
         }
 
         $ord = $ord & 255;
 
-        return isset($map[$bank][$langcode][$ord]) ? $map[$bank][$langcode][$ord] : $unknown;
+        return isset(self::$_map[$bank][$langcode][$ord])
+            ? self::$_map[$bank][$langcode][$ord]
+            : $unknown;
     }
 
 }
