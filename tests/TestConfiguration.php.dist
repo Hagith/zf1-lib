@@ -50,8 +50,3 @@
  * which require that headers not be sent in order to work.
  */
 defined('TESTS_OB_ENABLED') || define('TESTS_OB_ENABLED', false);
-
-/**
- * PHPUnit Code Coverage / Test Report
- */
-defined('TESTS_GENERATE_REPORT') || define('TESTS_GENERATE_REPORT', false);

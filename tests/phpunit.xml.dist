@@ -11,11 +11,8 @@
     </groups>
 
     <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">PHP</directory>
-            <exclude>
-                <file>tests/_autoload.php</file>
-            </exclude>
-        </whitelist>
+        <blacklist>
+            <directory suffix=".php">./</directory>
+        </blacklist>
     </filter>
 </phpunit>

@@ -68,33 +68,6 @@ if (is_readable($zfCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php')) {
     require_once $zfCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php.dist';
 }
 
-if (defined('TESTS_GENERATE_REPORT') && TESTS_GENERATE_REPORT === true) {
-    if (method_exists('PHP_CodeCoverage_Filter', 'getInstance')) {
-        $codeCoverageFilter = PHP_CodeCoverage_Filter::getInstance();
-    } else {
-        $codeCoverageFilter = new PHP_CodeCoverage_Filter();
-    }
-
-    $lastArg = end($_SERVER['argv']);
-    if (is_dir($zfCoreTests . '/' . $lastArg)) {
-        $codeCoverageFilter->addDirectoryToWhitelist($zfCoreLibrary . '/' . $lastArg);
-    } else if (is_file($zfCoreTests . '/' . $lastArg)) {
-        $codeCoverageFilter->addDirectoryToWhitelist(dirname($zfCoreLibrary . '/' . $lastArg));
-    } else {
-        $codeCoverageFilter->addDirectoryToWhitelist($zfCoreLibrary);
-    }
-
-    /**
-     * Omit from code coverage reports the contents of the tests directory
-     */
-    $codeCoverageFilter->addDirectoryToBlacklist($zfCoreTests, '');
-    $codeCoverageFilter->addDirectoryToBlacklist(PEAR_INSTALL_DIR, '');
-    $codeCoverageFilter->addDirectoryToBlacklist(PHP_LIBDIR, '');
-
-    unset($codeCoverageFilter);
-}
-
-
 /**
  * Start output buffering, if enabled
  */

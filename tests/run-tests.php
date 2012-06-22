@@ -59,10 +59,12 @@ if ($argc == 1) {
             case '-h':
             case '--html':
                 $phpunit_coverage = '--coverage-html ' . $argv[++$i];
+                $components = getAll($phpunit_conf);
                 break;
             case '-c':
             case '--clover':
                 $phpunit_coverage = '--coverage-clover ' . $argv[++$i];
+                $components = getAll($phpunit_conf);
                 break;
             case '-g':
             case '--groups':
