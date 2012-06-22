@@ -166,7 +166,7 @@ class Modern_String
             return $this;
         }
 
-        $this->_string = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $this->_string);
+        $this->_string = Modern_String_Transliteration::toAscii($this->_string);
 
         return $this;
     }
