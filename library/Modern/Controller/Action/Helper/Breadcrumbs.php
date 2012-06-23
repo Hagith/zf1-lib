@@ -69,6 +69,11 @@ class Modern_Controller_Action_Helper_Breadcrumbs extends Zend_Controller_Action
     protected $_maxLength = 10;
 
     /**
+     * @var boolean
+     */
+    private $_dispached = false;
+
+    /**
      * @param string $namespace
      */
     public function __construct($namespace = null)
@@ -85,6 +90,10 @@ class Modern_Controller_Action_Helper_Breadcrumbs extends Zend_Controller_Action
      */
     public function preDispatch()
     {
+        if ($this->_dispached) {
+            return;
+        }
+
         $request = $this->getRequest();
 
         if ($request->isPost() || $request->isXmlHttpRequest()) {
@@ -96,10 +105,11 @@ class Modern_Controller_Action_Helper_Breadcrumbs extends Zend_Controller_Action
 
         $query = $request->getQuery();
         if (count($query)) {
-            $url .= '?' . http_build_query($query);
+            $url .= '?' . urldecode(http_build_query($query));
         }
 
         $this->addStep($url);
+        $this->_dispached = true;
     }
 
     /**
