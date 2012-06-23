@@ -61,6 +61,11 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
     protected $_messenger;
 
     /**
+     * @var Modern_Controller_Action_Helper_Breadcrumbs
+     */
+    protected $_breadcrumbs;
+
+    /**
      * ContextSwitch controller helper instance
      *
      * @var Zend_Controller_Action_Helper_ContextSwitch
@@ -103,6 +108,8 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
         $this->_log = $this->_bootstrap->getResource('log');
 
         $this->_messenger = $this->_helper->getHelper('flashMessenger');
+
+        $this->_breadcrumbs = $this->_helper->getHelper('breadcrumbs');
 
         // initialize context helper
         $this->_context = $this->_helper->getHelper('contextSwitch');
