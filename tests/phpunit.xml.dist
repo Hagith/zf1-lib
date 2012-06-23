@@ -1,0 +1,21 @@
+<phpunit bootstrap="./Bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="Zend Framework Library Test Suite">
+            <directory>./Modern</directory>
+        </testsuite>
+    </testsuites>
+
+    <groups>
+        <exclude>
+        </exclude>
+    </groups>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">PHP</directory>
+            <exclude>
+                <file>tests/_autoload.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
