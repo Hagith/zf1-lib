@@ -45,8 +45,12 @@
 /**
  * GENERAL SETTINGS
  *
+ * ZEND_INCLUDE_PATH should be absolute path to Zend Framework if it's not
+ * placed in ./library/Zend directory.
+ *
  * OB_ENABLED should be enabled for some tests to check if all functionality
  * works as expected. Such tests include those for Zend\Soap and Zend\Session,
  * which require that headers not be sent in order to work.
  */
+defined('ZEND_INCLUDE_PATH') || define('ZEND_INCLUDE_PATH', null);
 defined('TESTS_OB_ENABLED') || define('TESTS_OB_ENABLED', false);

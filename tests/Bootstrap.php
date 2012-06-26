@@ -41,6 +41,16 @@ $modernCoreLibrary = "$modernRoot/library";
 $modernCoreTests = "$modernRoot/tests";
 
 /**
+ * Load the user-defined test configuration file, if it exists; otherwise, load
+ * the default configuration.
+ */
+if (is_readable($modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php')) {
+    require_once $modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php';
+} else {
+    require_once $modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php.dist';
+}
+
+/**
  * Prepend the Modern library/ and tests/ directories to the
  * include_path. This allows the tests to run out of the box and helps prevent
  * loading other copies of the framework code and tests that would supersede
@@ -49,8 +59,12 @@ $modernCoreTests = "$modernRoot/tests";
 $path = array(
     $modernCoreLibrary,
     $modernCoreTests,
-    get_include_path(),
 );
+if (defined('TESTS_OB_ENABLED') && null != ZEND_INCLUDE_PATH) {
+    $path[] = ZEND_INCLUDE_PATH;
+}
+$path[] = get_include_path();
+
 set_include_path(implode(PATH_SEPARATOR, $path));
 
 /**
@@ -58,14 +72,10 @@ set_include_path(implode(PATH_SEPARATOR, $path));
  */
 include __DIR__ . '/_autoload.php';
 
-/**
- * Load the user-defined test configuration file, if it exists; otherwise, load
- * the default configuration.
- */
-if (is_readable($modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php')) {
-    require_once $modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php';
-} else {
-    require_once $modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php.dist';
+// check Zend Framework include path
+@include_once 'Zend/Version.php';
+if (!class_exists('Zend_Version')) {
+    die("Can't find Zend Framework libraries. Configure ZEND_INCLUDE_PATH in TestConfiguration.php");
 }
 
 /**
