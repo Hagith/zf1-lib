@@ -78,6 +78,10 @@ if (!class_exists('Zend_Version')) {
     die("Can't find Zend Framework libraries. Configure ZEND_INCLUDE_PATH in TestConfiguration.php");
 }
 
+if (Zend_Version::compareVersion('1.11.10') > 0) {
+    die("Modern Library works with Zend Framework version >= 1.11.10. Your version is: " . Zend_Version::VERSION);
+}
+
 /**
  * Start output buffering, if enabled
  */
