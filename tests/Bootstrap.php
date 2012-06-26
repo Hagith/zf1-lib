@@ -36,19 +36,19 @@ unset($phpUnitVersion);
 /**
  * Determine the root, library, and tests directories of the framework.
  */
-$zfRoot = realpath(dirname(__DIR__));
-$zfCoreLibrary = "$zfRoot/library";
-$zfCoreTests = "$zfRoot/tests";
+$modernRoot = realpath(dirname(__DIR__));
+$modernCoreLibrary = "$modernRoot/library";
+$modernCoreTests = "$modernRoot/tests";
 
 /**
- * Prepend the Zend Framework library/ and tests/ directories to the
+ * Prepend the Modern library/ and tests/ directories to the
  * include_path. This allows the tests to run out of the box and helps prevent
  * loading other copies of the framework code and tests that would supersede
  * this copy.
  */
 $path = array(
-    $zfCoreLibrary,
-    $zfCoreTests,
+    $modernCoreLibrary,
+    $modernCoreTests,
     get_include_path(),
 );
 set_include_path(implode(PATH_SEPARATOR, $path));
@@ -62,10 +62,10 @@ include __DIR__ . '/_autoload.php';
  * Load the user-defined test configuration file, if it exists; otherwise, load
  * the default configuration.
  */
-if (is_readable($zfCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php')) {
-    require_once $zfCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php';
+if (is_readable($modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php')) {
+    require_once $modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php';
 } else {
-    require_once $zfCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php.dist';
+    require_once $modernCoreTests . DIRECTORY_SEPARATOR . 'TestConfiguration.php.dist';
 }
 
 /**
@@ -78,4 +78,4 @@ if (defined('TESTS_OB_ENABLED') && constant('TESTS_OB_ENABLED')) {
 /**
  * Unset global variables that are no longer needed.
  */
-unset($zfRoot, $zfCoreLibrary, $zfCoreTests, $path);
+unset($modernRoot, $modernCoreLibrary, $modernCoreTests, $path);
