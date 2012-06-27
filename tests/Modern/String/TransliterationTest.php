@@ -61,6 +61,7 @@ class TransliterationTest extends PHPUnit_Framework_TestCase
             => 'uuuuwwwwyyyyaaaaeeeeiiiioooo',                          // Welsh lowercase
         'ÛÜÚÙŴẄẂẀŶŸÝỲÂÄÁÀÊËÉÈÎÏÍÌÔÖÓÒ'
             => 'UUUUWWWWYYYYAAAAEEEEIIIIOOOO',                          // Welsh uppercase
+        '' => '',
     );
 
     public function testToAscii()

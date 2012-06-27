@@ -38,12 +38,23 @@ class Modern_String
     protected $_string = '';
 
     /**
+	 * Current encoding.
+	 *
+	 * @var string
+	 */
+	protected $_encoding = 'utf-8';
+
+    /**
      * @param string $string
      */
-    public function __construct($string = null)
+    public function __construct($string = null, $encoding = null)
     {
         if (null !== $string) {
             $this->setString($string);
+        }
+
+        if (null !== $encoding) {
+            $this->setEncoding($encoding);
         }
     }
 
@@ -51,9 +62,9 @@ class Modern_String
      * Set new string for operations.
      *
      * @param string $string
-     * @return Modern_String
+     * @return \Modern_String
      */
-    public function setString($string)
+    public function setString($string, $encoding = null)
     {
         if (is_object($string) && method_exists($string, '__toString')) {
             $string = (string)$string;
@@ -64,7 +75,13 @@ class Modern_String
         }
 
         if (!is_string($string)) {
+            /** @see Modern_String_Exception */
+            require_once 'Modern/String/Exception.php';
             throw new Modern_String_Exception('Value must be string');
+        }
+
+        if (null !== $encoding) {
+            $this->setEncoding($encoding);
         }
 
         $this->_string = $string;
@@ -75,6 +92,7 @@ class Modern_String
     /**
      * Get current string.
      *
+     * @return string
      */
     public function getString()
     {
@@ -82,38 +100,22 @@ class Modern_String
     }
 
     /**
-     * Generate random string with specified length,
-     * minimal numer of digits using specified set of characters.
-     *
-     * @param integer $length
-     * @param integer $minNumberOfDigits
-     * @param string $useChars
-     * @return Modern_String
+     * @return string
      */
-    public static function random($length = 6, $minNumberOfDigits = 1, $useChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjklmnpqrstuvwxyz23456789")
+    public function getEncoding()
     {
-        $string = '';
-        for ($i = 0; $i < $length; $i++) {
-            mt_srand((double) microtime() * 170305 * $i);
-            $string .= $useChars[mt_rand(0, strlen($useChars) - 1)];
-        }
+        return $this->_encoding;
+    }
 
-        if (!preg_match("/[0-9]/", $string)) {
-            $tmp = array();
-            for ($i = 0; $i <= $minNumberOfDigits && $i < $length; $i++) {
-                do {
-                    $d_pos = mt_rand(0, $length - 1);
-                } while (in_array($d_pos, $tmp));
-                array_push($tmp, $d_pos);
-                $string[$d_pos] = mt_rand(0, 9);
-            }
-        }
+    /**
+     * @param string $encoding
+     * @return \Modern_String
+     */
+    public function setEncoding($encoding)
+    {
+        $this->_encoding = $encoding;
 
-        // shuffle the order of characters
-        srand();
-        $string = str_shuffle((string) $string);
-
-        return new self($string);
+        return $this;
     }
 
     /**
@@ -123,11 +125,11 @@ class Modern_String
      * @param string $encoding
      * @return boolean
      */
-    public function stricmp($neddle, $encoding = 'utf-8')
+    public function stricmp($neddle)
     {
         if (
-            0 === mb_stripos($this->_string, $neddle, 0, $encoding)
-            && mb_strlen($this->_string, $encoding) === mb_strlen($neddle, $encoding)
+            0 === mb_stripos($this->_string, $neddle, 0, $this->_encoding)
+            && mb_strlen($this->_string, $this->_encoding) === mb_strlen($neddle, $this->_encoding)
         ) {
             return true;
         }
@@ -146,11 +148,8 @@ class Modern_String
             return $this;
         }
 
-        $this->_string = str_replace("\r\n", " ", $this->_string);
-        $this->_string = str_replace("\n", " ", $this->_string);
-        $this->_string = str_replace("\r", " ", $this->_string);
-        $this->_string = str_replace("\t", "", $this->_string);
-        $this->_string = preg_replace('#[ ]+#', ' ', $this->_string);
+        $this->_string = str_replace(array("\r\n", "\n", "\r", "\t"), ' ', $this->_string);
+        $this->_string = preg_replace('/[ ]+/', ' ', $this->_string);
 
         return $this;
     }
@@ -158,7 +157,7 @@ class Modern_String
     /**
      * Replace non ASCII letters to their equivalents.
      *
-     * @return Modern_String
+     * @return \Modern_String
      */
     public function toAscii()
     {
@@ -201,13 +200,9 @@ class Modern_String
             $this->lowercase();
         }
 
-        $replacements = array(
-            '?' => '', "'" => '', '"' => '', '/' => '', '+' => '', ',' => '-',
-            '(' => '', ')' => '', ' ' => '-', '&' => '', ':' => '-', '!' => '',
-        );
-        $this->_string = strtr($this->_string, $replacements);
-        $this->_string = preg_replace('|[-]+|', '-', $this->_string);
-        $this->_string = urlencode($this->_string);
+        $this->_string = preg_replace('/\W/', '-', $this->_string);
+        $this->_string = preg_replace('/[-]+/', '-', $this->_string);
+        $this->_string = trim($this->_string, '-');
 
         return $this;
     }
@@ -233,13 +228,14 @@ class Modern_String
      */
     public function ucfirst()
     {
-        if (0 == $this->length()) {
+        $length = $this->length();
+        if (0 == $length) {
             return $this;
         }
 
         $first = mb_substr($this->_string, 0, 1, $this->_encoding);
         $first = mb_convert_case($first, MB_CASE_UPPER, $this->_encoding);
-        $this->_string = $first . mb_substr($this->_string, 1, $strlen, $this->_encoding);
+        $this->_string = $first . mb_substr($this->_string, 1, $length, $this->_encoding);
 
         return $this;
     }
@@ -253,6 +249,52 @@ class Modern_String
     }
 
     /**
+     * @param string $allowableTags
+     * @return \Modern_String
+     */
+    public function stripTags($allowableTags = null)
+    {
+        $this->_string = strip_tags($this->_string, $allowableTags);
+
+        return $this;
+    }
+
+    /**
+     * Truncate string after $lenght respecting full words.
+     *
+     * @param integer $length
+     * @param string $etc
+     * @return \Modern_String
+     */
+    public function wordTruncate($length, $etc = '')
+    {
+        if ($length <= 0) {
+            /** @see Modern_String_Exception */
+            require_once 'Modern/String/Exception.php';
+            throw new Modern_String_Exception('Length must be greater than zero');
+        }
+
+        if (0 == $this->length()) {
+            return $this;
+        }
+
+        $words = explode(' ', $this->_string);
+        $this->_string = '';
+        foreach ($words as &$word) {
+            if ($this->length() >= $length) {
+                $this->trim(' -=\\;,./!@#$%^&*|":?');
+                $this->_string .= $etc;
+                break;
+            }
+            $this->_string .= $word . ' ';
+        }
+
+        $this->trim();
+
+        return $this;
+    }
+
+    /**
      * Cast object to string.
      *
      * @return string
@@ -263,29 +305,67 @@ class Modern_String
     }
 
     /**
-     * Truncate string after $lenght respecting full words.
+     * Generate random string with specified length,
+     * minimal numer of digits using specified set of characters.
      *
-     * @param string $string
      * @param integer $length
-     * @param string $etc
-     * @return Modern_String
+     * @param integer $minNumberOfDigits
+     * @param string $useChars
+     * @return \Modern_String
      */
-    public static function wordTruncate($string, $length, $etc = '')
+    public static function random($length = 6, $minNumberOfDigits = 1, $useChars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjklmnpqrstuvwxyz23456789')
     {
-        $string = strip_tags($string);
-        $words = explode(" ", $string);
-        if (is_array($words)) {
-            $string = '';
-            foreach ($words as &$word) {
-                if (mb_strlen($string) > $length) {
-                    $string = trim($string) . $etc;
-                    break;
-                }
-                $string .= $word . ' ';
-            }
+        if ($minNumberOfDigits > $length) {
+            $minNumberOfDigits = $length;
         }
 
-        return new self(trim($string));
+        $string = '';
+        for ($i = 0; $i < $length; $i++) {
+            mt_srand((double) microtime() * 170305 * $i);
+            $string .= $useChars[mt_rand(0, strlen($useChars) - 1)];
+        }
+
+        $tmp = array();
+        $digitsCount = preg_match_all('/[0-9]/', $string, $tmp);
+        if ($digitsCount < $minNumberOfDigits) {
+            $tmp = array();
+            for ($i = $digitsCount; $i < $minNumberOfDigits; $i++) {
+                do {
+                    $d_pos = mt_rand(0, $length - 1);
+                } while (in_array($d_pos, $tmp) || preg_match('/[0-9]/', $string{$d_pos}));
+                array_push($tmp, $d_pos);
+                $string{$d_pos} = mt_rand(0, 9);
+            }
+            unset($tmp);
+        }
+
+        // shuffle the order of characters
+        srand();
+        $string = str_shuffle((string) $string);
+
+        return new self($string);
+    }
+
+    /**
+     * @param integer $length
+     * @return \Modern_String
+     */
+    public static function randomNumber($length)
+    {
+        return self::random($length, $length, '0123456789');
+    }
+
+    /**
+     * @param string $text
+     * @param integer $length
+     * @param string $etc
+     * @return \Modern_String
+     */
+    public static function excerpt($text, $length, $etc = '')
+    {
+        $string = new self($text);
+
+        return $string->stripTags('<br>')->wordTruncate($length, $etc);
     }
 
 }
