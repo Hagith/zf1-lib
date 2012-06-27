@@ -21,6 +21,8 @@
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
+require_once 'Zend/Registry.php';
+
 /**
  * String transliteration.
  *
@@ -47,17 +49,16 @@ class Modern_String_Transliteration
      */
     public static function toAscii($value, $language = null)
     {
-        if (!$language && class_exists('Zend_Registry')) {
-            try {
-                $locale = Zend_Registry::get("Zend_Locale");
-                $language = $locale->getLanguage();
-            } catch (Exception $e) {
+        if (!$language) {
+            if (Zend_Registry::isRegistered('Zend_Locale')) {
+                $language = Zend_Registry::get('Zend_Locale')->getLanguage();
+            } else {
                 // there is no locale use default
                 $language = 'en';
             }
         }
 
-        $value = self::_process($value, '?', $language);
+        $value = self::_process($value, $language, '?');
 
         // then use iconv
         $value = trim(iconv("utf-8", "ASCII//IGNORE//TRANSLIT", $value));
@@ -72,19 +73,18 @@ class Modern_String_Transliteration
      *
      * @param $string
      *  UTF-8 encoded text input.
-     * @param $unknown
-     *  Replacement string for characters that do not have a suitable ASCII
-     *  equivalent.
      * @param $source_langcode
-     *  Optional ISO 639 language code that denotes the language of the input and
+     *  ISO 639 language code that denotes the language of the input and
      *  is used to apply language-specific variations. If the source language is
      *  not known at the time of transliteration, it is recommended to set this
      *  argument to the site default language to produce consistent results.
-     *  Otherwise the current display language will be used.
+     * @param $unknown
+     *  Replacement string for characters that do not have a suitable ASCII
+     *  equivalent.
      * @return
      *  Transliterated text.
      */
-    protected static function _process($string, $unknown = '?', $source_langcode = NULL)
+    protected static function _process($string, $source_langcode, $unknown = '?')
     {
         // ASCII is always valid NFC! If we're only ever given plain ASCII, we can
         // avoid the overhead of initializing the decomposition tables by skipping
@@ -183,7 +183,7 @@ class Modern_String_Transliteration
                     } elseif ($n <= 0xfd) {
                         $ord = ($n - 252) * 1073741824 + (ord($sequence[1]) - 128) * 16777216 + (ord($sequence[2]) - 128) * 262144 + (ord($sequence[3]) - 128) * 4096 + (ord($sequence[4]) - 128) * 64 + (ord($sequence[5]) - 128);
                     }
-                    $result .= self::_replace($ord, $unknown, $source_langcode);
+                    $result .= self::_replace($ord, $source_langcode, $unknown);
                     $head = '';
                 } elseif ($c < "\x80") {
                     // ASCII byte.
@@ -209,22 +209,17 @@ class Modern_String_Transliteration
      *
      * @param $ord
      *  An ordinal Unicode character code.
+     * @param $langcode
+     *  ISO 639 language code that denotes the language of the input and
+     *  is used to apply language-specific variations.
      * @param $unknown
      *  Replacement string for characters that do not have a suitable ASCII
      *  equivalent.
-     * @param $langcode
-     *  Optional ISO 639 language code that denotes the language of the input and
-     *  is used to apply language-specific variations.  Defaults to the current
-     *  display language.
      * @return
      *  ASCII replacement character.
      */
-    protected static function _replace($ord, $unknown = '?', $langcode = NULL)
+    protected static function _replace($ord, $langcode, $unknown = '?')
     {
-        if (!isset($langcode)) {
-            $langcode = 'en';
-        }
-
         $bank = $ord >> 8;
 
         if (!isset(self::$_map[$bank][$langcode])) {
