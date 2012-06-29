@@ -117,6 +117,29 @@ class Modern_Filesystem_Directory
     }
 
     /**
+     * Get list of files matching $mask.
+     *
+     * @param string $mask
+     * @return array
+     */
+    public function getFiles($mask = '.*')
+    {
+        $files = array();
+
+        foreach ($this->getIterator() as $item) {
+            if ($item->isDir()) {
+                continue;
+            }
+
+            if (preg_match("|$mask|", $item->getFileName())) {
+                $files[] = $item->getFileName();
+            }
+        }
+
+        return $files;
+    }
+
+    /**
      * Create directory in given path.
      *
      * @param string $path
