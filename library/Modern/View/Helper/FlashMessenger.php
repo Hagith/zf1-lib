@@ -76,15 +76,20 @@ class Modern_View_Helper_FlashMessenger extends Zend_View_Helper_Abstract
             return $this;
         }
 
-        if (!self::$_partial) {
-            throw new Modern_View_Helper_Exception('No messenger partial defined');
-        }
+        $messages = ($current)
+            ? $this->_messenger->getCurrentMessages()
+            : $this->_messenger->getMessages();
 
-        $this->_html = $this->view->partial(self::$_partial, array(
-            'messages' => ($current)
-                ? $this->_messenger->getCurrentMessages()
-                : $this->_messenger->getMessages()
-        ));
+        if (self::$_partial) {
+            $this->_html = $this->view->partial(self::$_partial, array(
+                'messages' => $messages,
+            ));
+        } else {
+            $tpl = '<div class="alert alert-%s">%s</div>';
+            foreach ($messages as $message) {
+                $this->_html .= sprintf($tpl, $message['type'], $message['body']) . PHP_EOL;
+            }
+        }
 
         return $this;
     }

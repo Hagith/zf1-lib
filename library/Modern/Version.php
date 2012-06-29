@@ -33,7 +33,7 @@ final class Modern_Version
     /**
      * Modern libraries version identification - see compareVersion()
      */
-    const VERSION = '0.1.0';
+    const VERSION = '0.2.0';
 
     /**
      * Compare the specified ModernApp version string $version
