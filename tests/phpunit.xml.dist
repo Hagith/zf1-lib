@@ -1,0 +1,19 @@
+<phpunit bootstrap="./Bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="Zend Framework Library Test Suite">
+            <directory>./Modern</directory>
+        </testsuite>
+    </testsuites>
+
+    <groups>
+        <exclude>
+        </exclude>
+    </groups>
+
+    <filter>
+        <blacklist>
+            <directory suffix=".php">./</directory>
+            <directory suffix=".php">./../library/Zend</directory>
+        </blacklist>
+    </filter>
+</phpunit>

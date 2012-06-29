@@ -33,6 +33,13 @@
 abstract class Modern_Controller_Action extends Zend_Controller_Action
 {
     /**
+     * Zend_Controller_Request_Http object wrapping the request environment
+     *
+     * @var Zend_Controller_Request_Http
+     */
+    protected $_request = null;
+
+    /**
      * Bootstrap reference.
      *
      * @var Modern_Application_Bootstrap
@@ -42,9 +49,28 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
     /**
      * Logger reference.
      *
-     * @var Zend_Log
+     * @var Modern_Log
      */
     protected $_log;
+
+    /**
+     * FlashMessenger controller helper instance.
+     *
+     * @var Modern_Controller_Action_Helper_FlashMessenger
+     */
+    protected $_messenger;
+
+    /**
+     * @var Modern_Controller_Action_Helper_Breadcrumbs
+     */
+    protected $_breadcrumbs;
+
+    /**
+     * ContextSwitch controller helper instance
+     *
+     * @var Zend_Controller_Action_Helper_ContextSwitch
+     */
+    protected $_context;
 
     /**
      * Class constructor
@@ -81,7 +107,70 @@ abstract class Modern_Controller_Action extends Zend_Controller_Action
         $this->_bootstrap = $this->getInvokeArg('bootstrap');
         $this->_log = $this->_bootstrap->getResource('log');
 
+        $this->_messenger = $this->_helper->getHelper('flashMessenger');
+
+        $this->_breadcrumbs = $this->_helper->getHelper('breadcrumbs');
+
+        // initialize context helper
+        $this->_context = $this->_helper->getHelper('contextSwitch');
+        if(!$this->_context->hasContext('html')) {
+            $this->_context->addContext(
+                'html', array(
+                    'suffix'    => '',
+                    'headers'   => array('Content-Type' => 'text/html'),
+                )
+            );
+        }
+        $this->_context->setContextParam('context');
+        $this->_context->setCallback('json', 'TRIGGER_INIT', array($this, 'contextJsonCallback'));
+        $this->_context->setCallback('xml', 'TRIGGER_INIT', array($this, 'contextXmlCallback'));
+        $this->_context->setCallback('html', 'TRIGGER_INIT', array($this, 'contextXmlCallback'));
+
         $this->init();
+
+        $this->_context->initContext();
+    }
+
+    /**
+     * Callback for JSON context.
+     *
+     * Turn off view renderer and layout.
+     *
+     */
+    public function contextJsonCallback()
+    {
+        $this->getHelper('viewRenderer')->setNoRender(true);
+        $this->_helper->layout->disableLayout();
+    }
+
+    /**
+     * Callback for XML context.
+     *
+     * Turn off layout.
+     *
+     */
+    public function contextXmlCallback()
+    {
+        $this->_helper->layout->disableLayout();
+    }
+
+    /**
+     * Proxy for undefined methods.  Default behavior is to throw an
+     * exception on undefined methods, however this function can be
+     * overridden to implement magic (dynamic) actions, or provide run-time
+     * dispatching.
+     *
+     * Added translate call.
+     *
+     * @param string $methodName
+     * @param array $args
+     * @return mixed
+     */
+    public function __call($methodName, $args) {
+        if ($methodName == '_') {
+            return call_user_func_array(array($this->view, '_'), $args);
+        }
+        parent::__call($methodName, $args);
     }
 
 }
