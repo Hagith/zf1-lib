@@ -1,28 +1,35 @@
 <?php
+
 /**
- * Modern
+ * ModernWeb
  *
  * LICENSE
  *
- * This source file is subject to version 1.0
- * of the ModernWeb license.
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.modernweb.pl/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
  * @package     Modern_Image
  * @subpackage  Manager
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
+ * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
 /** @see Modern_Image_Exception */
-require_once('Modern/Image/Exception.php');
+require_once 'Modern/Image/Exception.php';
 
 /**
  * @category    Modern
  * @package     Modern_Image
  * @subpackage  Manager
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
 class Modern_Image_Manager_Exception extends Modern_Image_Exception
 {

@@ -1,58 +1,64 @@
 <?php
+
 /**
- * Modern
+ * ModernWeb
  *
  * LICENSE
  *
- * This source file is subject to version 1.0
- * of the ModernWeb license.
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.modernweb.pl/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
  * @package     Modern_Image
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
+ * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
 /** @see Zend_Loader */
 require_once('Zend/Loader.php');
 
 /**
- * Klasa fabrykująca odpowiedni adapter.
+ * Image adapter factory.
  *
  * @category    Modern
  * @package     Modern_Image
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
 class Modern_Image
 {
     /**
-     * Metoda statyczna tworząca obiekt adaptera określonej biblioteki graficznej.
+     * Static method for instantiation of image adapters.
      *
-     * @param   string $adapter Identyfikator adaptera
-     * @param   array|Zend_Config $config Tablica konfiguracyjna lub obiekt Zend_Config
-     * @return  Modern_Image_Adapter Obiekt adaptera biblioteki graficznej
+     * @param string $adapter Adapter name
+     * @param array|Zend_Config $config Adapter configuration
+     * @return Modern_Image_Adapter
      */
     public static function factory($adapter, $config = null)
     {
-        $adapterClass = 'Modern_Image_Adapter_' . ucfirst($adapter);
+        $class = 'Modern_Image_Adapter_' . ucfirst($adapter);
         try {
-            Zend_Loader::loadClass($adapterClass);
+            Zend_Loader::loadClass($class);
         } catch (Exception $e) {
-            /** @see Modern_Image_Exception */
-            require_once('Modern/Image/Exception.php');
-            throw new Modern_Image_Exception("Nieznany adapter '$adapter'");
+            require_once 'Modern/Image/Exception.php';
+            throw new Modern_Image_Exception("Unknown image adapter '$adapter'");
         }
 
-        $imgAdapter = new $adapterClass($config);
+        $adapter = new $class($config);
 
-        // Sprawdzenie, czy klasa implementuje adapter bazowy
-        if(!$imgAdapter instanceof Modern_Image_Adapter) {
-            /** @see Modern_Image_Exception */
-            require_once('Modern/Image/Exception.php');
-            throw new Modern_Image_Exception('Adapter musi dziedziczyć po Modern_Image_Adapter.');
+        // Check if class implements abstract image adapter
+        if (!$adapter instanceof Modern_Image_Adapter) {
+            require_once 'Modern/Image/Exception.php';
+            throw new Modern_Image_Exception("Image adapter '$class' must inherit from Modern_Image_Adapter");
         }
 
-        return $imgAdapter;
+        return $adapter;
     }
+
 }
