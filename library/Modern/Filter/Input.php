@@ -1,43 +1,50 @@
 <?php
+
 /**
- * Modern
+ * ModernWeb
  *
  * LICENSE
  *
- * This source file is subject to version 1.0
- * of the ModernWeb license.
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.modernweb.pl/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to kontakt@modernweb.pl so we can send you a copy immediately.
  *
  * @category    Modern
  * @package     Modern_Filter
  * @subpackage  Input
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
+ * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
 /** @see Zend_Filter_Input */
-require_once('Zend/Filter/Input.php');
+require_once 'Zend/Filter/Input.php';
 
 /**
- * Klasa rozszerzająca Zend_Filter_Input o możliwość pobrania przefiltrowanych danych
- * po wykonaniu sprawdzenia danych wejściowych (metoda isValid())
+ * Extended Zend_Filter_Input class with ability to retreive filtered data
+ * after checking the input data (after Zend_Filter_Input::isValid() call)
  *
  * @category    Modern
  * @package     Modern_Filter
  * @subpackage  Input
- * @author      Rafał Gałka <rafal.galka@modernweb.pl>
- * @copyright   Copyright (c) 2007-2010 ModernWeb (http://www.modernweb.pl)
+ * @author      Rafał Gałka <rafal@modernweb.pl>
+ * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
 class Modern_Filter_Input extends Zend_Filter_Input
 {
     /**
-     * Dane po filtracji
+     * Filtered data.
      *
      * @var array
      */
     protected $_filtered;
 
     /**
-     * Pobiera dane po filtracji
+     * Get filtered data.
      *
      * @return array
      */
@@ -47,7 +54,8 @@ class Modern_Filter_Input extends Zend_Filter_Input
     }
 
     /**
-     * Filtracja danych
+     * Perform data filtering.
+     *
      */
     protected function _filter()
     {
@@ -100,7 +108,7 @@ class Modern_Filter_Input extends Zend_Filter_Input
              * Else just process the field named by the rule.
              */
             if ($ruleName == self::RULE_WILDCARD) {
-                foreach (array_keys($this->_data) as $field)  {
+                foreach (array_keys($this->_data) as $field) {
                     $this->_filterRule(array_merge($filterRule, array(self::FIELDS => $field)));
                 }
             } else {
@@ -130,4 +138,5 @@ class Modern_Filter_Input extends Zend_Filter_Input
             $this->_filtered[$field] = $this->_data[$field];
         }
     }
+
 }

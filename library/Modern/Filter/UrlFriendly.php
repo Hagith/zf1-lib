@@ -15,49 +15,35 @@
  *
  * @category    Modern
  * @package     Modern_Filter
- * @subpackage  File
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
-/** @see Modern_Filter_UrlFriendly */
-require_once 'Modern/Filter/UrlFriendly.php';
+/** @see Zend_Filter_Interface */
+require_once 'Zend/Filter/Interface.php';
 
 /**
  * @category    Modern
  * @package     Modern_Filter
- * @subpackage  File
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
-class Modern_Filter_File_NameNormalize extends Modern_Filter_UrlFriendly
+class Modern_Filter_UrlFriendly implements Zend_Filter_Interface
 {
     /**
      * Defined by Zend_Filter_Interface
      *
-     * Does a name normalization on the name of the given file.
+     * Returns url friendly representation of $value.
      *
-     * @param string $value Full path of file to change
-     * @return string Normalized path
-     * @throws Zend_Filter_Exception
+     * @param string $value
+     * @return string
      */
     public function filter($value)
     {
-        $pathinfo = pathinfo($value);
+        $string = new Modern_String($value);
 
-        $filename = parent::filter($pathinfo['filename']);
-        $filename .= '.' . parent::filter($pathinfo['extension']);
-        $target = $pathinfo['dirname'] . '/' . $filename;
-
-        $result = rename($value, $target);
-
-        if ($result === true) {
-            return $target;
-        }
-
-        require_once 'Zend/Filter/Exception.php';
-        throw new Zend_Filter_Exception(sprintf("File '%s' could not be renamed. An error occured while processing the file.", $value));
+        return $string->toUrl()->getString();
     }
 
 }
