@@ -252,26 +252,60 @@ class Modern_Filesystem_File
     }
 
     /**
-     * Zwaraca unikalną nazwę dla pliku w podanym katalogu.
+     * Get random unique file name in given directory.
      *
      * @param string $dir
      * @param string $suffix
      * @return string
      * @uses Modern_String
      */
-    public static function getUniqueName($dir, $suffix = '')
+    public static function getRandomName($dir, $suffix = '')
     {
         if (!is_dir($dir)) {
             throw new Modern_Filesystem_Exception("Katalog '$dir', nie istnieje.");
         }
 
-        do {
+        while (true) {
             $name = strtolower(Modern_String::random(6) . $suffix);
             $file = $dir . DIRECTORY_SEPARATOR . $name;
             if (!is_file($file)) {
                 return $name;
             }
-        } while (1);
+        }
+    }
+
+    /**
+     * @param string $dir
+     * @param string $filename
+     * @return string
+     * @throws Modern_Filesystem_Exception
+     */
+    public static function getUniqueName($dir, $filename)
+    {
+        if (!is_dir($dir)) {
+            throw new Modern_Filesystem_Exception("Directory '$dir' doesn't exists");
+        }
+
+        $originalFilename = $filename;
+        $count = 1;
+
+        if ($dir == '/') {
+            $dir = '';
+        }
+
+        while (true) {
+            $file = new self($dir . $filename);
+            if (Asset_Service::pathExists($dir . '/' . $filename)) {
+                $filename = str_replace(
+                    '.' . Pimcore_File::getFileExtension($originalFilename),
+                    '_' . $count . '.' . Pimcore_File::getFileExtension($originalFilename),
+                    $originalFilename
+                );
+                $count++;
+            } else {
+                return $filename;
+            }
+        }
     }
 
 }
