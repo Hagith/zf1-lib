@@ -10,6 +10,7 @@ Code was made mainly during the implementations of various projects and is used 
 ### Modern_Controller ###
 ### Modern_Facebook ###
 ### Modern_Filesystem ###
+### Modern_Filter ###
 ### Modern_Gdata ###
 ### Modern_Log ###
 ### Modern_String ###
