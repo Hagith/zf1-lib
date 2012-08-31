@@ -1,7 +1,30 @@
 {
     "name": "modern/zf1-lib",
+    "description": "Collection of classes/components which extend or supplement Zend Framework 1.x",
+    "type": "library",
+    "keywords": [
+        "zend",
+        "Zend Framework",
+        "zf1"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+    {
+        "name": "Rafał Gałka",
+        "email": "rafal.galka@modernweb.pl",
+        "homepage": "http://blog.modernweb.pl/"
+    }
+    ],
     "require": {
         "php": ">=5.2.4",
         "zendframework/zendframework1" : ">=1.12.0"
-    }
+    },
+    "autoload": {
+        "psr-0": {
+            "Modern": "library/"
+        }
+    },
+    "include-path": [
+        "library/"
+    ]
 }
