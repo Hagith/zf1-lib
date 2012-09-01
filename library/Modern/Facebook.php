@@ -85,20 +85,13 @@ class Modern_Facebook
     protected $_loggedUser;
 
     /**
-     * Powoluje obiekt facady
+     * @param array|Zend_Config $options
      */
     public function __construct($options)
     {
         $this->setOptions($options);
-//        $this->_setClient();
-//        $this->_options = $options;
-//
-//        Modern_Facebook_Object::setApp($this);
 
-        //czy aplikacja jest w canvasie
-//        if (1 == (int) $options['canvasApp']) {
-//            $this->checkCanvasPermission();
-//        }
+        Modern_Facebook_Object::setFacebook($this);
     }
 
     /**
@@ -184,6 +177,19 @@ class Modern_Facebook
         $this->_options['permissions'] = $perms;
 
         return $this;
+    }
+
+    /**
+     * @param array $params
+     * @return string
+     */
+    public function getLoginUrl(array $params = array())
+    {
+        if (!isset($params['scope']) && !empty($this->_options['permissions'])) {
+            $params['scope'] = $this->_options['permissions'];
+        }
+
+        return $this->getSdk()->getLoginUrl($params);
     }
 
     /**
