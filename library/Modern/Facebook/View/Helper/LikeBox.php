@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ModernWeb
  *
@@ -21,7 +22,7 @@
  */
 
 /** @see Zend_View_Helper_Abstract */
-require_once('Zend/View/Helper/Abstract.php');
+require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper widoku generujący Facebook Like Box.
@@ -31,7 +32,6 @@ require_once('Zend/View/Helper/Abstract.php');
  * @subpackage  View
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
- * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 class Modern_Facebook_View_Helper_LikeBox extends Zend_View_Helper_Abstract
 {
@@ -49,11 +49,11 @@ class Modern_Facebook_View_Helper_LikeBox extends Zend_View_Helper_Abstract
      * @var array
      */
     protected $_defaults = array(
-        'colorscheme'   => 'light',
-        'header'        => 'false',
-        'force_wall'    => 'true',
-        'stream'        => 'true',
-        'connections'   => '0',
+        'colorscheme' => 'light',
+        'header' => 'false',
+        'force_wall' => 'true',
+        'stream' => 'true',
+        'connections' => '0',
     );
 
     /**
@@ -69,7 +69,7 @@ class Modern_Facebook_View_Helper_LikeBox extends Zend_View_Helper_Abstract
     public function likeBox($fanpageHref, $width, $height, $params = array(), $css = '')
     {
         $args = array();
-        foreach($this->_defaults as $k => $v) {
+        foreach ($this->_defaults as $k => $v) {
             $args[$k] = (isset($params[$k])) ? $params[$k] : $v;
         }
 
@@ -83,4 +83,5 @@ class Modern_Facebook_View_Helper_LikeBox extends Zend_View_Helper_Abstract
             'allowTransparency="true"></iframe>';
         return sprintf($script, $iframeSrc, $width, $height);
     }
+
 }

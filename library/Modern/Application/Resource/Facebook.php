@@ -21,43 +21,52 @@
  * @license     http://www.modernweb.pl/license/new-bsd     New BSD License
  */
 
-/** @see Zend_Application_Resource_Frontcontroller */
-require_once('Zend/Application/Resource/Frontcontroller.php');
+/** @see Zend_Application_Resource_ResourceAbstract */
+require_once 'Zend/Application/Resource/ResourceAbstract.php';
 
 /**
- * Class is an extension of the Zend Frontcontroller resource.
- *
- * Allows to register custom dispatcher/response classes.
- *
  * @category    Modern
  * @package     Modern_Application
  * @subpackage  Resource
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2012 ModernWeb (http://www.modernweb.pl)
  */
-class Modern_Application_Resource_Frontcontroller extends Zend_Application_Resource_Frontcontroller
+class Modern_Application_Resource_Facebook extends Zend_Application_Resource_ResourceAbstract
 {
     /**
-     * Initialize Front Controller
+     * @var Facebook_Model_Facade
+     */
+    protected $_facebook;
+
+    /**
+     * Defined by Zend_Application_Resource_Resource
      *
-     * @return Zend_Controller_Front
+     * @return Facebook_Model_Facade
      */
     public function init()
     {
-        foreach ($this->getOptions() as $key => $value) {
-            switch (strtolower($key)) {
-                case 'dispatcherclass':
-                    Zend_Loader::loadClass($value);
-                    $this->getFrontController()->setDispatcher(new $value());
-                    break;
-                case 'responseclass':
-                    Zend_Loader::loadClass($value);
-                    $this->getFrontController()->setResponse(new $value());
-                    break;
-            }
-        }
+        return $this->getFacebook();
+    }
 
-        return parent::init();
+    /**
+     * Zwraca obiekt Facebook_Model_Facade
+     *
+     * @return Facebook_Model_Facade
+     */
+    public function getFacebook()
+    {
+        if (null === $this->_facebook) {
+
+            $option = $this->getOptions();
+            $this->_facebook = new Modern_Facebook($option);
+
+            // dodanie fasady jako zmiennej globalnej w widoku
+            $bootstrap = $this->getBootstrap();
+            $bootstrap->bootstrap('view');
+            $view = $bootstrap->getResource('view');
+            $view->addGlobalVar('facebook', $this->_facebook);
+        }
+        return $this->_facebook;
     }
 
 }
