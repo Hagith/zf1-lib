@@ -151,7 +151,7 @@ class Modern_Facebook
     {
         $config = array(
             'appId' => $options['appId'],
-            'secret' => $options['apiSecret'],
+            'secret' => $options['secret'],
             'cookie' => (boolean) $options['cookie'],
         );
 
