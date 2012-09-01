@@ -39,7 +39,7 @@ class Modern_Facebook
         'xfbml' => true,  // (JavaScript SDK) parse XFBML
         'fileUpload' => false, // (PHP SDK) https://developers.facebook.com/docs/reference/php/facebook-setFileUploadSupport/
         'canvas' => null, // facebook canvas application URL
-        'forceCanvas' => false, // force user redirect to facebook canvas
+        'forceRedirectTo' => false, // force user redirect to facebook canvas
         'tab' => null, // facebook page tab URL
         'fanpageId' => null,
         'fanpageUrl' => null,
@@ -126,7 +126,7 @@ class Modern_Facebook
      */
     public function setOption($name, $value)
     {
-        if (in_array($name, array('cookie', 'status', 'xfbml', 'forceCanvas'))) {
+        if (in_array($name, array('cookie', 'status', 'xfbml'))) {
             $value = (bool) $value;
         }
         $setter = 'set' + ucfirst($name);
@@ -177,6 +177,46 @@ class Modern_Facebook
         $this->_options['permissions'] = $perms;
 
         return $this;
+    }
+
+    /**
+     * @param string|boolean $value
+     * @return \Modern_Facebook
+     * @throws Modern_Facebook_Exception
+     */
+    public function setForceRedirectTo($value)
+    {
+        if (!$value) {
+            $this->_options['forceRedirectTo'] = false;
+            return $this;
+        }
+
+        if (in_array($value, arrat('canvas', 'tab'))) {
+            $this->_options['forceRedirectTo'] = $value;
+            return $this;
+        }
+
+        throw new Modern_Facebook_Exception("Unknown redirect target '$value'");
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isForceRedirectTo()
+    {
+        return (bool) $this->_options['forceRedirectTo'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getForceRedirectTarget()
+    {
+        if ($this->_options['forceRedirectTo']) {
+            return $this->_options[$this->_options['forceRedirectTo']];
+        }
+
+        return null;
     }
 
     /**
