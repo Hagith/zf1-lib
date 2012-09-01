@@ -37,6 +37,13 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
     const OPERA_FIX = 'if (window.opera) { FB.XD._transport="postmessage"; FB.XD.PostMessage.init(); }';
 
     /**
+     * Registry key
+     *
+     * @var string
+     */
+    protected $_regKey = 'Modern_Facebook_View_Helper_Facebook';
+
+    /**
      * @var Modern_Facebook
      */
     protected $_facebook;
