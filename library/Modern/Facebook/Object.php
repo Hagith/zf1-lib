@@ -33,31 +33,24 @@
 abstract class Modern_Facebook_Object
 {
     /**
-     * Modern_Facebook
-     *
-     * @var object
+     * @var Modern_Facebook
      */
-    static protected $_app;
+    static protected $_facebook;
 
     /**
-     * Ustawia Modern_Facebook
-     *
-     * @param Modern_Facebook $app
-     * @return void
+     * @param Modern_Facebook $facebook
      */
-    static public function setApp(Modern_Facebook $app)
+    static public function setFacebook(Modern_Facebook $facebook)
     {
-        self::$_app = $app;
+        self::$_facebook = $facebook;
     }
 
     /**
-     * zwraca Modern_Facebook
-     *
      * @return Modern_Facebook
      */
-    static public function getApp()
+    static public function getFacebook()
     {
-        return self::$_app;
+        return self::$_facebook;
     }
 
 }

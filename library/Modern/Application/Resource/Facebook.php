@@ -45,6 +45,10 @@ class Modern_Application_Resource_Facebook extends Zend_Application_Resource_Res
      */
     public function init()
     {
+        if (PHP_SAPI !== 'cli') {
+            Zend_Session::start();
+        }
+
         return $this->getFacebook();
     }
 
@@ -55,10 +59,25 @@ class Modern_Application_Resource_Facebook extends Zend_Application_Resource_Res
     {
         if (null === $this->_facebook) {
 
-            $option = $this->getOptions();
-            $this->_facebook = new Modern_Facebook($option);
+            $this->_facebook = $this->newInstance();
+
+            // register controller plugin
+            Zend_Controller_Front::getInstance()->registerPlugin(
+                new Modern_Facebook_Controller_Plugin_Facebook()
+            );
         }
+
         return $this->_facebook;
+    }
+
+    /**
+     * Get clear instance.
+     *
+     * @return \Modern_Facebook
+     */
+    public function newInstance()
+    {
+        return new Modern_Facebook($this->getOptions());
     }
 
 }

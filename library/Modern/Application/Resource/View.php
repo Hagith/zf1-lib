@@ -22,7 +22,9 @@
  */
 
 /**
- * Rozszerzenie zasobu widoku obsługujące większą ilość opcji konfiguracyjnych.
+ * Resource for settings view options.
+ *
+ * Introduces support for more configuration options.
  *
  * @category    Modern
  * @package     Modern_Application
@@ -30,14 +32,15 @@
  * @author      Rafał Gałka <rafal@modernweb.pl>
  * @copyright   Copyright (c) 2007-2011 ModernWeb (http://www.modernweb.pl)
  */
-class Modern_Application_Resource_View extends Zend_Application_Resource_View {
-
+class Modern_Application_Resource_View extends Zend_Application_Resource_View
+{
     /**
      * Retrieve view object
      *
      * @return Modern_View
      */
-    public function getView() {
+    public function getView()
+    {
         if (null === $this->_view) {
             $options = $this->getOptions();
             $this->_view = new Modern_View($options);
@@ -76,10 +79,11 @@ class Modern_Application_Resource_View extends Zend_Application_Resource_View {
      *
      * @param array $options
      */
-    protected function _setupHelpers(array $options) {
+    protected function _setupHelpers(array $options)
+    {
         foreach ($options as $helperName => $config) {
             $helper = $this->_view->getHelper($helperName);
-            if(method_exists($helper, 'setOptions')) {
+            if (method_exists($helper, 'setOptions')) {
                 $helper->setOptions($config);
             }
         }

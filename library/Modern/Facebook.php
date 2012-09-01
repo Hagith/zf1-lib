@@ -28,47 +28,24 @@
  */
 class Modern_Facebook
 {
-    /**
-     * @var  Modern/Facebook/Graph/facebook.php
-     */
-    protected $_api;
+    protected $_options = array(
+        'appId' => null,
+        'secret' => null,
+        'cookie' => true, // (JavaScript SDK) enable cookies to allow the server to access the session
+        'status' => true, // (JavaScript SDK) check login status
+        'xfbml' => true,  // (JavaScript SDK) parse XFBML
+        'fileUpload' => false, // (PHP SDK) https://developers.facebook.com/docs/reference/php/facebook-setFileUploadSupport/
+        'canvas' => null, // facebook canvas application URL
+        'tab' => null, // facebook page tab URL
+        'fanpageId' => null,
+        'fanpageUrl' => null,
+        'permissions' => array(), // http://developers.facebook.com/docs/authentication/permissions
+    );
 
     /**
-     * Api key aplikacji
-     *
-     * @var string
+     * @var Facebook
      */
-    protected $_apiKey;
-
-    /**
-     * Api secret aplikacji
-     *
-     * @var string
-     */
-    protected $_apiSecret;
-
-    /**
-     * Id aplikacji
-     *
-     * @var int
-     */
-    protected $_appId;
-
-    /**
-     * Prawa jakie ma wymuszać aplikacja
-     * Sczegóły
-     * http://developers.facebook.com/docs/authentication/permissions
-     *
-     * @var array
-     */
-    protected $_permission;
-
-    /**
-     * Url strony aplikacji na facebooku
-     *
-     * @var string
-     */
-    protected $_canvasUrl;
+    protected $_sdk;
 
     /**
      * Access token
@@ -104,27 +81,132 @@ class Modern_Facebook
     protected $_loggedUser;
 
     /**
-     * Zawiera dane konfiguracyjne z facebook.ini
-     *
-     * @var array
-     */
-    protected $_options;
-
-    /**
      * Powoluje obiekt facady
      */
     public function __construct($options)
     {
-        $this->_setConfig($options);
-        $this->_setClient();
-        $this->_options = $options;
-
-        Modern_Facebook_Object::setApp($this);
+        $this->setOptions($options);
+//        $this->_setClient();
+//        $this->_options = $options;
+//
+//        Modern_Facebook_Object::setApp($this);
 
         //czy aplikacja jest w canvasie
-        if (1 == (int) $options['canvasApp']) {
-            $this->checkCanvasPermission();
+//        if (1 == (int) $options['canvasApp']) {
+//            $this->checkCanvasPermission();
+//        }
+    }
+
+    /**
+     * @param array|Zend_Config $options
+     * @return Modern_Facebook
+     * @thrown Modern_Facebook_Exception
+     */
+    public function setOptions($options)
+    {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
         }
+
+        foreach ($options as $name => $value) {
+            $this->setOption($name, $value);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->_options;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return \Modern_Facebook
+     * @throws Modern_Facebook_Exception
+     */
+    public function setOption($name, $value)
+    {
+        if (in_array($name, array('cookie', 'status', 'xfbml'))) {
+            $value = (bool) $value;
+        }
+        $setter = 'set' + ucfirst($name);
+        if (method_exists($this, $setter)) {
+            $this->$setter($value);
+            return $this;
+        }
+
+        if (array_key_exists($name, $this->_options)) {
+            $this->_options[$name] = $value;
+            return $this;
+        }
+
+        throw new Modern_Facebook_Exception("Unknown option '$key'");
+    }
+
+    /**
+     * Get option value.
+     *
+     * @param string $name
+     * @return mixed
+     * @thrown Modern_Facebook_Exception
+     */
+    public function getOption($name)
+    {
+        if (!array_key_exists($name, $this->_options)) {
+            throw new Modern_Facebook_Exception("Unknown option '$name'");
+        }
+
+        return $this->_options[$name];
+    }
+
+    /**
+     * @param array|string $perms
+     * @return \Modern_Facebook
+     * @throws Modern_Facebook_Exception
+     */
+    public function setPermissions($perms)
+    {
+        if (is_string($perms)) {
+            $perms = preg_split('/,/', $perms, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        if (!is_array($perms)) {
+            throw new Modern_Facebook_Exception('Permissions must be string or array');
+        }
+
+        $this->_options['permissions'] = $perms;
+
+        return $this;
+    }
+
+    /**
+     * @return Zend_Http_Client
+     */
+    public function getClient()
+    {
+        if (null == $this->_client) {
+            $client = new Zend_Http_Client(null, array(
+                'maxredirects' => 0,
+                'timeout' => 30
+            ));
+            $this->setClient($client);
+        }
+
+        return $this->_client;
+    }
+
+    /**
+     * @return Modern_Facebook
+     */
+    public function setClient(Zend_Http_Client $client)
+    {
+        $this->_client = $client;
+        $this->_client->setMethod(Zend_Http_Client::POST);
+
+        return $this;
     }
 
     /**
@@ -139,28 +221,6 @@ class Modern_Facebook
         } else {
             $this->_setVariablesFromSession();
         }
-    }
-
-    /**
-     * Ustawia konfiguracje
-     *
-     * @param array $options
-     * @return void
-     */
-    private function _setConfig($options)
-    {
-        $config = array(
-            'appId' => $options['appId'],
-            'secret' => $options['secret'],
-            'cookie' => (boolean) $options['cookie'],
-        );
-
-        $this->_api = new Facebook($config);
-        $this->_appId = $options['appId'];
-        $this->_canvasUrl = $options['canvasUrl'];
-        $this->_apiSecret = $options['apiSecret'];
-        $this->_apiKey = $options['apiKey'];
-        $this->_permission = $options['permission'];
     }
 
     /**
@@ -196,20 +256,6 @@ class Modern_Facebook
     }
 
     /**
-     * Ustawia Zend_Http_Client
-     *
-     * @return void
-     */
-    private function _setClient()
-    {
-        $this->_client = new Zend_Http_Client(null, array(
-                'maxredirects' => 0,
-                'timeout' => 30
-            ));
-        $this->_client->setMethod(Zend_Http_Client::POST);
-    }
-
-    /**
      * Zwraca w postaci tablicy dane zawarte w sessji
      * Tablica ta zawiera nastepujace dane:
      * 'uid'
@@ -223,7 +269,7 @@ class Modern_Facebook
      */
     public function getSessionData()
     {
-        return $this->_api->getSession();
+        return $this->_sdk->getSession();
     }
 
     /**
@@ -233,7 +279,7 @@ class Modern_Facebook
      */
     public function isConnected()
     {
-        return $this->_api->getUser() ? true : false;
+        return $this->_sdk->getUser() ? true : false;
     }
 
     /**
@@ -245,13 +291,15 @@ class Modern_Facebook
     {
         if ($this->isConnected()) {
             $userPerms = $this->getLoggedUser()->getPermissions()->getUsersAccessPermissions();
-            foreach ($this->_permission as $perm) {
+            foreach ($this->_options['permissions'] as $perm) {
                 if (!isset($userPerms[$perm]) || !$userPerms[$perm]) {
                     return false;
                 }
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -272,34 +320,14 @@ class Modern_Facebook
                 'canvas' => 1,
                 'fbconnect' => 0,
             );
+
             //gdy aplikacja posiada dodatkowe prawa
-            if (!empty($this->_permission)) {
-                $config['req_perms'] = implode(',', $this->_permission);
+            if (!empty($this->_options['permissions'])) {
+                $config['req_perms'] = implode(',', $this->_options['permissions']);
             }
         }
 
-        $loginUrl = $this->_api->getLoginUrl($config);
-        return $loginUrl;
-    }
-
-    /**
-     * Zwraca Api Key aplikacji
-     *
-     * @return string
-     */
-    public function getApiKey()
-    {
-        return $this->_apiKey;
-    }
-
-    /**
-     * Zwraca Api Secret Aplikacji
-     *
-     * @return string
-     */
-    public function getApiSecret()
-    {
-        return $this->_apiSecret;
+        return $this->_sdk->getLoginUrl($config);
     }
 
     /**
@@ -312,21 +340,6 @@ class Modern_Facebook
         return $this->_appId;
     }
 
-    /**
-     * Zwraca canvasUrl - adres URL aplikacji na Facebooku
-     *
-     * @return string
-     */
-    public function getCanvasUrl()
-    {
-        return $this->_canvasUrl;
-    }
-
-    /**
-     * Zwraca tablice uprawnien aplikacji
-     *
-     * @return array
-     */
     public function getPermissions()
     {
         return $this->_permission;
@@ -384,28 +397,47 @@ class Modern_Facebook
             'method' => 'fql.query',
             'query' => $query,
         );
-        return $this->_api->api($param);
+
+        return $this->_sdk->api($param);
     }
 
     /**
      * Zwraca object Facebook [ 'Facebook/Model/Api/facebook.php' ]
      *
      * @return array
+     * @todo rename to graphApi
      */
     public function getApp($graphQuery, $urlParams = null)
     {
         $graphQuery.= (null == $urlParams) ? '?access_token=' . $this->getAccessToken() : '?' . urldecode(http_build_query($urlParams));
-        return $this->_api->api($graphQuery);
+        return $this->_sdk->api($graphQuery);
     }
 
     /**
-     * Metoda zwraca obiekt Modern/Facebook/Graph/facebook.php
-     *
+     * @param Facebook $sdk
+     * @return \Modern_Facebook
+     */
+    public function setSdk(Facebook $sdk)
+    {
+        $this->_sdk = $sdk;
+
+        return $this;
+    }
+
+    /**
      * @return Facebook
      */
-    public function getApi()
+    public function getSdk()
     {
-        return $this->_api;
+        if (null == $this->_sdk) {
+            $this->_sdk = new Facebook(array(
+                'appId' => $this->_options['appId'],
+                'secret' => $this->_options['secret'],
+                'fileUpload' => $this->_options['fileUpload'],
+            ));
+        }
+
+        return $this->_sdk;
     }
 
     /**
@@ -429,22 +461,12 @@ class Modern_Facebook
     private function _setAppAccessToken()
     {
         $params = array(
-            'client_id' => $this->getAppId(),
-            'client_secret' => $this->getApiSecret(),
+            'client_id' => $this->getOption('appId'),
+            'client_secret' => $this->getOption('secret'),
             'type' => 'client_cred'
         );
         $tmpAccessToken = $this->getApp('/oauth/access_token', $params);
         $this->_appAccessToken = substr($tmpAccessToken, 13);
-    }
-
-    /**
-     * Zwraca Zend_Http_Client
-     *
-     * @return object
-     */
-    public function getClient()
-    {
-        return $this->_client;
     }
 
     /**
@@ -474,25 +496,11 @@ class Modern_Facebook
     {
         $this->_client->setUri('https://graph.facebook.com/oauth/exchange_sessions');
         $this->_client->setParameterPost('type', 'client_cred');
-        $this->_client->setParameterPost('client_id', $this->getAppId());
-        $this->_client->setParameterPost('client_secret', $this->getApiSecret());
+        $this->_client->setParameterPost('client_id', $this->getOption('appId'));
+        $this->_client->setParameterPost('client_secret', $this->getOption('secret'));
         $this->_client->setParameterPost('sessions', $sessionKey);
 
         return $response = $this->_client->request();
-    }
-
-    /**
-     * Zwraca wartośc podanej zmiennej konfiguracyjnej
-     *
-     * @param string $optionName
-     * @return string | false (w przypadku kiedy nie ma takie opcji)
-     */
-    public function getOption($optionName)
-    {
-        if (!array_key_exists($optionName, $this->_options)) {
-            return false;
-        }
-        return $this->_options[$optionName];
     }
 
 }
