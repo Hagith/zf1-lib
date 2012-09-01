@@ -72,7 +72,7 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
 
         $script = '';
         if ($this->_facebook->isForceRedirectTo()) {
-            $script .= $this->getForceRedirectScript($this->_facebook->getForceRedirectTarget());
+            $script .= $this->getForceRedirectScript();
         }
 
         $request = Zend_Controller_Front::getInstance()->getRequest();
@@ -108,16 +108,31 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
      * @param string $url
      * @return string
      */
-    public function getForceRedirectScript($url)
+    public function getForceRedirectScript()
     {
+        $target = $this->_facebook->getOption('forceRedirectTo');
+        $url = Zend_Uri_Http::fromString($this->_facebook->getForceRedirectTargetUrl());
+
         $script  = '<script type="text/javascript">' . PHP_EOL;
         $script .= "if(top == self) {" . PHP_EOL;
-        $script .= "    var pathElements = (top.location.href+'').split('/')" . PHP_EOL;
-        $script .= "    var query = '';" . PHP_EOL;
-        $script .= "    for(i = 0; i < pathElements.length; i++) {" . PHP_EOL;
-        $script .= "        if(i > 2) { query += pathElements[i]; }" . PHP_EOL;
-        $script .= "    }" . PHP_EOL;
-        $script .= "    top.location.href = '" . $url . "' + query;" . PHP_EOL;
+        $script .= "    var elements = (top.location.href + '').split(/[\/\?]+/);" . PHP_EOL;
+        $script .= "    var queryParams = elements.pop().split(/[?&]+/);" . PHP_EOL;
+        $script .= "    var path = elements.splice(2).join('/');" . PHP_EOL;
+        switch ($target) {
+            case 'tab':
+                $script .= "    queryParams.unshift('app_data=/' + path + '/');" . PHP_EOL;
+                $query = $url->setQuery(array());
+                if ($query) {
+                    $script .= "    queryParams.unshift('$query');" . PHP_EOL;
+                }
+                $script .= "    var url = '{$url->getUri()}/?' + queryParams.join('&');" . PHP_EOL;
+                break;
+            case 'canvas':
+                // @todo handle canvas redirect url
+                $script .= "    var url = 'http://www.google.pl/'" . PHP_EOL;
+                break;
+        }
+        $script .= "    top.location.href = url;" . PHP_EOL;
         $script .= '};' . PHP_EOL;
         $script .= '</script>' . PHP_EOL;
 

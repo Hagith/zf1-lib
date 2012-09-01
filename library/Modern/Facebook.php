@@ -210,7 +210,7 @@ class Modern_Facebook
     /**
      * @return string
      */
-    public function getForceRedirectTarget()
+    public function getForceRedirectTargetUrl()
     {
         if ($this->_options['forceRedirectTo']) {
             return $this->_options[$this->_options['forceRedirectTo']];
