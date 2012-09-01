@@ -28,6 +28,9 @@
  */
 class Modern_Facebook
 {
+    /**
+     * @var array
+     */
     protected $_options = array(
         'appId' => null,
         'secret' => null,
@@ -270,7 +273,7 @@ class Modern_Facebook
      */
     public function getSessionData()
     {
-        return $this->_sdk->getSession();
+        return $this->getSdk()->getSession();
     }
 
     /**
@@ -280,7 +283,7 @@ class Modern_Facebook
      */
     public function isConnected()
     {
-        return $this->_sdk->getUser() ? true : false;
+        return $this->getSdk()->getUser() ? true : false;
     }
 
     /**
@@ -328,7 +331,7 @@ class Modern_Facebook
             }
         }
 
-        return $this->_sdk->getLoginUrl($config);
+        return $this->getSdk()->getLoginUrl($config);
     }
 
     /**
@@ -399,7 +402,7 @@ class Modern_Facebook
             'query' => $query,
         );
 
-        return $this->_sdk->api($param);
+        return $this->getSdk()->api($param);
     }
 
     /**
@@ -411,7 +414,7 @@ class Modern_Facebook
     public function getApp($graphQuery, $urlParams = null)
     {
         $graphQuery.= (null == $urlParams) ? '?access_token=' . $this->getAccessToken() : '?' . urldecode(http_build_query($urlParams));
-        return $this->_sdk->api($graphQuery);
+        return $this->getSdk()->api($graphQuery);
     }
 
     /**
