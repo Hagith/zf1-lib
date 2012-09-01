@@ -106,7 +106,7 @@ class Modern_Facebook_Object_User extends Modern_Facebook_Object
      */
     public function getFriends()
     {
-        $friends = self::$_app->getApp('/' . $this->_id . '/friends');
+        $friends = self::$_facebook->getApp('/' . $this->_id . '/friends');
         return $friends['data'];
     }
 
@@ -118,7 +118,7 @@ class Modern_Facebook_Object_User extends Modern_Facebook_Object
      */
     public function getTagsPhotos()
     {
-        $tagsPhotos = self::$_app->getApp('/' . $this->_id . '/photos');
+        $tagsPhotos = self::$_facebook->getApp('/' . $this->_id . '/photos');
         return $tagsPhotos['data'];
     }
 
@@ -130,7 +130,7 @@ class Modern_Facebook_Object_User extends Modern_Facebook_Object
      */
     public function getVideos()
     {
-        $videos = self::$_app->getApp('/' . $this->_id . '/videos');
+        $videos = self::$_facebook->getApp('/' . $this->_id . '/videos');
         return $videos['data'];
     }
 
@@ -142,7 +142,7 @@ class Modern_Facebook_Object_User extends Modern_Facebook_Object
      */
     public function getAlbums()
     {
-        $albums = self::$_app->getApp('/' . $this->_id . '/albums');
+        $albums = self::$_facebook->getApp('/' . $this->_id . '/albums');
         return $albums['data'];
     }
 
@@ -154,7 +154,7 @@ class Modern_Facebook_Object_User extends Modern_Facebook_Object
      */
     public function getPosts()
     {
-        $posts = self::$_app->getApp('/' . $this->_id . '/posts');
+        $posts = self::$_facebook->getApp('/' . $this->_id . '/posts');
         return $posts['data'];
     }
 
@@ -167,7 +167,7 @@ class Modern_Facebook_Object_User extends Modern_Facebook_Object
     public function getProfile($reload = false)
     {
         if (null === $this->_profile || $reload) {
-            $this->_profile = self::$_app->getApp('/' . $this->_id);
+            $this->_profile = self::$_facebook->getApp('/' . $this->_id);
         }
         return $this->_profile;
     }

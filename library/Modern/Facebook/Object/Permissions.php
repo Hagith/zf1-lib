@@ -59,7 +59,7 @@ class Modern_Facebook_Object_Permissions extends Modern_Facebook_Object
     public function __construct($fbUserId)
     {
         $this->_fbUserId = $fbUserId;
-        $this->_permissions = self::$_app->getPermissions();
+        $this->_permissions = self::$_facebook->getOption('permissions');
     }
 
     /**

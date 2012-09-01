@@ -131,7 +131,7 @@ class Modern_Facebook_Object_Subscription extends Modern_Facebook_Object
         $appId = $this->getApp()->getAppId();
         $appAccessToken = $this->getApp()->getAppAccessToken();
         $this->getApp()->setAccessToken($appAccessToken);
-        return self::$_app->getApp('/' . $appId . '/subscriptions');
+        return self::$_facebook->getApp('/' . $appId . '/subscriptions');
     }
 
     /**

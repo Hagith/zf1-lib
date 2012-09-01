@@ -100,7 +100,7 @@ class Modern_Facebook_Validate_FbPermissions extends Modern_Facebook_Validate_Ab
     public function setPerms($perms)
     {
         if ($perms == self::USE_CONFIG_PERMS) {
-            $this->_perms = $this->getFacebook()->getPermissions();
+            $this->_perms = $this->getFacebook()->getOption('permissions');
             return $this;
         }
         if (is_array($perms)) {
@@ -108,7 +108,7 @@ class Modern_Facebook_Validate_FbPermissions extends Modern_Facebook_Validate_Ab
             return $this;
         }
 
-        $this->_perms = preg_split('/;|,| /', (string) $perms, -1, PREG_SPLIT_NO_EMPTY);
+        $this->_perms = preg_split('/|,|/', (string) $perms, -1, PREG_SPLIT_NO_EMPTY);
         return $this;
     }
 

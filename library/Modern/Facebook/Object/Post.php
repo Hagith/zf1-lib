@@ -177,7 +177,7 @@ class Modern_Facebook_Object_Post extends Modern_Facebook_Object
      */
     public function getData()
     {
-        return self::$_app->getApp('/' . $this->_id);
+        return self::$_facebook->getApp('/' . $this->_id);
     }
 
     /**
@@ -303,7 +303,7 @@ class Modern_Facebook_Object_Post extends Modern_Facebook_Object
      */
     public function getComments()
     {
-        return self::$_app->getApp('/' . $this->_id . '/comments');
+        return self::$_facebook->getApp('/' . $this->_id . '/comments');
     }
 
     /**

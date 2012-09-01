@@ -34,39 +34,50 @@ require_once 'Zend/Application/Resource/ResourceAbstract.php';
 class Modern_Application_Resource_Facebook extends Zend_Application_Resource_ResourceAbstract
 {
     /**
-     * @var Facebook_Model_Facade
+     * @var Modern_Facebook
      */
     protected $_facebook;
 
     /**
      * Defined by Zend_Application_Resource_Resource
      *
-     * @return Facebook_Model_Facade
+     * @return Modern_Facebook
      */
     public function init()
     {
+        if (PHP_SAPI !== 'cli') {
+            Zend_Session::start();
+        }
+
         return $this->getFacebook();
     }
 
     /**
-     * Zwraca obiekt Facebook_Model_Facade
-     *
-     * @return Facebook_Model_Facade
+     * @return Modern_Facebook
      */
     public function getFacebook()
     {
         if (null === $this->_facebook) {
 
-            $option = $this->getOptions();
-            $this->_facebook = new Modern_Facebook($option);
+            $this->_facebook = $this->newInstance();
 
-            // dodanie fasady jako zmiennej globalnej w widoku
-            $bootstrap = $this->getBootstrap();
-            $bootstrap->bootstrap('view');
-            $view = $bootstrap->getResource('view');
-            $view->addGlobalVar('facebook', $this->_facebook);
+            // register controller plugin
+            Zend_Controller_Front::getInstance()->registerPlugin(
+                new Modern_Facebook_Controller_Plugin_Facebook()
+            );
         }
+
         return $this->_facebook;
+    }
+
+    /**
+     * Get clear instance.
+     *
+     * @return \Modern_Facebook
+     */
+    public function newInstance()
+    {
+        return new Modern_Facebook($this->getOptions());
     }
 
 }
