@@ -36,6 +36,7 @@ class Modern_Facebook
         'xfbml' => true,  // (JavaScript SDK) parse XFBML
         'fileUpload' => false, // (PHP SDK) https://developers.facebook.com/docs/reference/php/facebook-setFileUploadSupport/
         'canvas' => null, // facebook canvas application URL
+        'forceCanvas' => false, // force user redirect to facebook canvas
         'tab' => null, // facebook page tab URL
         'fanpageId' => null,
         'fanpageUrl' => null,
@@ -129,7 +130,7 @@ class Modern_Facebook
      */
     public function setOption($name, $value)
     {
-        if (in_array($name, array('cookie', 'status', 'xfbml'))) {
+        if (in_array($name, array('cookie', 'status', 'xfbml', 'forceCanvas'))) {
             $value = (bool) $value;
         }
         $setter = 'set' + ucfirst($name);

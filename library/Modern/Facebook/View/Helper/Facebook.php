@@ -69,6 +69,12 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
     public function toString($indent = null)
     {
         $options = $this->_facebook->getOptions();
+
+        $script = '';
+        if ($options['canvas'] && $options['forceCanvas']) {
+            $script .= $this->getForceCanvasScript($options['canvas']);
+        }
+
         $request = Zend_Controller_Front::getInstance()->getRequest();
         $options['channelUrl'] = '//' . $request->getHttpHost() . '/channel.html';
 
@@ -77,7 +83,6 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         )));
         $paramsJson = Zend_Json::encode($params);
 
-        $script  = '';
         $script .= '<div id="fb-root"></div>' . PHP_EOL;
         $script .= '<script>' . PHP_EOL;
         $script .= 'window.fbAsyncInit = function() {' . PHP_EOL;
@@ -93,6 +98,26 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         $script .= '    js.src = "//connect.facebook.net/pl_PL/all.js";' . PHP_EOL;
         $script .= '    ref.parentNode.insertBefore(js, ref);' . PHP_EOL;
         $script .= '}(document));' . PHP_EOL;
+        $script .= '</script>' . PHP_EOL;
+
+        return $script;
+    }
+
+    /**
+     * @param string $canvasUrl
+     * @return string
+     */
+    public function getForceCanvasScript($canvasUrl)
+    {
+        $script  = '<script type="text/javascript">' . PHP_EOL;
+        $script .= "if(top == self) {" . PHP_EOL;
+        $script .= "    var pathElements = (top.location.href+'').split('/')" . PHP_EOL;
+        $script .= "    var query = '';" . PHP_EOL;
+        $script .= "    for(i = 0; i < pathElements.length; i++) {" . PHP_EOL;
+        $script .= "        if(i > 2) { query += '/' + pathElements[i]; }" . PHP_EOL;
+        $script .= "    }" . PHP_EOL;
+        $script .= "    top.location.href = '" . $canvasUrl . "' + query;" . PHP_EOL;
+        $script .= '};' . PHP_EOL;
         $script .= '</script>' . PHP_EOL;
 
         return $script;
