@@ -87,9 +87,7 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         $script .= '<script>' . PHP_EOL;
         $script .= 'window.fbAsyncInit = function() {' . PHP_EOL;
         $script .= "    FB.init($paramsJson);" . PHP_EOL;
-        if ($this->_facebook->getForceRedirectTarget()) {
-            $script .= '    FB.Canvas.setSize();' . PHP_EOL;
-        }
+        $script .= '    FB.Canvas.setSize();' . PHP_EOL;
         $script .= '    ' . self::OPERA_FIX . PHP_EOL;
         $script .= '    if (window.jQuery) { $(document).trigger("facebookReady"); }' . PHP_EOL;
         $script .= '};' . PHP_EOL;
@@ -117,7 +115,7 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         $script .= "    var pathElements = (top.location.href+'').split('/')" . PHP_EOL;
         $script .= "    var query = '';" . PHP_EOL;
         $script .= "    for(i = 0; i < pathElements.length; i++) {" . PHP_EOL;
-        $script .= "        if(i > 2) { query += '/' + pathElements[i]; }" . PHP_EOL;
+        $script .= "        if(i > 2) { query += pathElements[i]; }" . PHP_EOL;
         $script .= "    }" . PHP_EOL;
         $script .= "    top.location.href = '" . $url . "' + query;" . PHP_EOL;
         $script .= '};' . PHP_EOL;
