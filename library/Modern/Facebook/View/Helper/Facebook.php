@@ -76,6 +76,8 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         }
 
         $request = Zend_Controller_Front::getInstance()->getRequest();
+        unset($options['secret']);
+        $optionsJson = Zend_Json::encode($options);
         $options['channelUrl'] = '//' . $request->getHttpHost() . '/channel.html';
 
         $params = array_intersect_key($options, array_flip(array(
@@ -90,7 +92,7 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         $script .= "    FB.init($paramsJson);" . PHP_EOL;
         $script .= '    FB.Canvas.setSize();' . PHP_EOL;
         $script .= '    ' . self::OPERA_FIX . PHP_EOL;
-        $script .= '    if (window.jQuery) { $(document).trigger("facebookReady"); }' . PHP_EOL;
+        $script .= '    if (window.jQuery) { $(document).trigger("facebookReady", ' . $optionsJson . '); }' . PHP_EOL;
         $script .= '};' . PHP_EOL;
         $script .= '' . PHP_EOL;
         $script .= '(function(d){' . PHP_EOL;
