@@ -234,6 +234,26 @@ class Modern_Facebook
     }
 
     /**
+     * @param array $ids
+     * @param integer $to
+     * @return boolean
+     */
+    public function deleteRequests(array $ids, $to)
+    {
+        $success = true;
+        foreach ($ids as $id) {
+            $requestId = $id . '_' . $to;
+            try {
+                $this->getSdk()->api("/$requestId", 'DELETE');
+            } catch (Exception $e) {
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
+
+    /**
      * @return Zend_Http_Client
      */
     public function getClient()
