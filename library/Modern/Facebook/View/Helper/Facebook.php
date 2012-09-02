@@ -90,7 +90,7 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         $script .= '<script>' . PHP_EOL;
         $script .= 'window.fbAsyncInit = function() {' . PHP_EOL;
         $script .= "    FB.init($paramsJson);" . PHP_EOL;
-        $script .= '    FB.Canvas.setSize();' . PHP_EOL;
+        $script .= '    FB.Canvas.setAutoGrow();' . PHP_EOL;
         $script .= '    ' . self::OPERA_FIX . PHP_EOL;
         $script .= '    if (window.jQuery) { $(document).trigger("facebookReady", ' . $optionsJson . '); }' . PHP_EOL;
         $script .= '};' . PHP_EOL;
