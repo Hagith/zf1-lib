@@ -80,6 +80,7 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
 
         $params = array_intersect_key($options, array_flip(array(
             'appId', 'channelUrl', 'status', 'cookie', 'xfbml',
+            'frictionlessRequests',
         )));
         $paramsJson = Zend_Json::encode($params);
 
