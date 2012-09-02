@@ -123,12 +123,12 @@ class Modern_Facebook_View_Helper_Facebook extends Zend_View_Helper_HeadScript
         $script .= "    var path = elements.splice(2).join('/');" . PHP_EOL;
         switch ($target) {
             case 'tab':
-                $script .= "    queryParams.unshift('app_data=/' + path + '/');" . PHP_EOL;
+                $script .= "    queryParams.unshift('app_data=/' + path);" . PHP_EOL;
                 $query = $url->setQuery(array());
                 if ($query) {
                     $script .= "    queryParams.unshift('$query');" . PHP_EOL;
                 }
-                $script .= "    var url = '{$url->getUri()}/?' + queryParams.join('&');" . PHP_EOL;
+                $script .= "    var url = '{$url->getUri()}?' + queryParams.join('&');" . PHP_EOL;
                 break;
             case 'canvas':
                 // @todo handle canvas redirect url
