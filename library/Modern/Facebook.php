@@ -37,6 +37,7 @@ class Modern_Facebook
         'cookie' => true, // (JavaScript SDK) enable cookies to allow the server to access the session
         'status' => true, // (JavaScript SDK) check login status
         'xfbml' => true,  // (JavaScript SDK) parse XFBML
+        'frictionlessRequests' => false, // (JavaScript SDK) see https://developers.facebook.com/docs/reference/dialogs/requests/#frictionless_requests
         'fileUpload' => false, // (PHP SDK) https://developers.facebook.com/docs/reference/php/facebook-setFileUploadSupport/
         'canvas' => null, // facebook canvas application URL
         'forceRedirectTo' => false, // force user redirect to facebook canvas
@@ -126,7 +127,7 @@ class Modern_Facebook
      */
     public function setOption($name, $value)
     {
-        if (in_array($name, array('cookie', 'status', 'xfbml'))) {
+        if (in_array($name, array('cookie', 'status', 'xfbml', 'frictionlessRequests'))) {
             $value = (bool) $value;
         }
         $setter = 'set' + ucfirst($name);
@@ -210,7 +211,7 @@ class Modern_Facebook
     /**
      * @return string
      */
-    public function getForceRedirectTarget()
+    public function getForceRedirectTargetUrl()
     {
         if ($this->_options['forceRedirectTo']) {
             return $this->_options[$this->_options['forceRedirectTo']];
@@ -230,6 +231,26 @@ class Modern_Facebook
         }
 
         return $this->getSdk()->getLoginUrl($params);
+    }
+
+    /**
+     * @param array $ids
+     * @param integer $to
+     * @return boolean
+     */
+    public function deleteRequests(array $ids, $to)
+    {
+        $success = true;
+        foreach ($ids as $id) {
+            $requestId = $id . '_' . $to;
+            try {
+                $this->getSdk()->api("/$requestId", 'DELETE');
+            } catch (Exception $e) {
+                $success = false;
+            }
+        }
+
+        return $success;
     }
 
     /**

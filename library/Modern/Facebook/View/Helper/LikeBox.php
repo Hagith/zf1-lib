@@ -65,6 +65,14 @@ class Modern_Facebook_View_Helper_LikeBox extends Zend_View_Helper_Abstract
      * @param array $params
      * @param string $css
      * @return string
+     *
+     * @deprecated
+     * @todo <div class="fb-like-box"
+            data-href="<?=$this->facebook->getOption('fanpageUrl')?>"
+            data-width="292"
+            data-show-faces="false"
+            data-stream="false"
+            data-header="true"></div>
      */
     public function likeBox($fanpageHref, $width, $height, $params = array(), $css = '')
     {
