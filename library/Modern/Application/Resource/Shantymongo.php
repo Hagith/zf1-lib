@@ -33,9 +33,25 @@
  */
 class Modern_Application_Resource_ShantyMongo extends Zend_Application_Resource_ResourceAbstract
 {
+    protected $_env = array(
+        'MONGOLAB_URI',
+    );
+
     public function init()
     {
-        Shanty_Mongo::addConnections($this->getOptions());
+        $connected = false;
+        foreach ($this->_env as $env) {
+            if (strlen(getenv($env))) {
+                $conn = new Shanty_Mongo_Connection(getenv($env));
+                Shanty_Mongo::addMaster($conn);
+                $connected = true;
+                break;
+            }
+        }
+
+        if (!$connected) {
+            Shanty_Mongo::addConnections($this->getOptions());
+        }
     }
 
 }
