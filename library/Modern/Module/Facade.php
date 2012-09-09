@@ -100,14 +100,14 @@ abstract class Modern_Module_Facade
      */
     public function getModuleName($lower = false)
     {
-        $name = explode('_', get_class($this), -1);
-        $name = $name[1];
+        $class = explode('_', get_class($this), -1);
+        $module = isset($class[1]) ? $class[1] : $class[0];
 
         if($lower) {
-            $name = strtolower($name);
+            return strtolower($module);
         }
 
-        return $name;
+        return $module;
     }
 
     /**
