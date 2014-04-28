@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zend-config>
+    <home>
+        <label>Home</label>
+        <route>default</route>
+    </home>
+    <about>
+        <label>About</label>
+        <route>about</route>
+    </about>
+    <contact>
+        <label>Contact</label>
+        <controller>contact</controller>
+        <action>index</action>
+    </contact>
+    <offer>
+        <label>Offer</label>
+        <route>offer</route>
+        <pages>
+            <web>
+                <label>Web</label>
+                <route>offer</route>
+            </web>
+            <mobile>
+                <label>Mobile</label>
+                <route>offer</route>
+            </mobile>
+        </pages>
+    </offer>
+</zend-config>
